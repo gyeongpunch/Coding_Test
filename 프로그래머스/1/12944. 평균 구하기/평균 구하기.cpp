@@ -1,19 +1,13 @@
 #include <string>
 #include <vector>
+#include <numeric>
 
 using namespace std;
 
 double solution(vector<int> arr) {
-    double answer = 0;
+    double answer = accumulate(arr.begin(), arr.end(), 0);
     
-    int sum = 0;
-    int length = arr.size();
-    
-    for (int i=0; i<length; i++){
-        sum += arr[i];
-    }
-    
-    answer = double(sum)/length;
+    answer = answer/arr.size();
     
     return answer;
 }
