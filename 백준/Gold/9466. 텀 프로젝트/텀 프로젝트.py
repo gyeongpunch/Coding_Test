@@ -1,30 +1,28 @@
-import sys
-sys.setrecursionlimit(111111) #충분한 재귀 깊이를 주어 오류를 예방
+from collections import deque
 
+def bfs(start):
+    q = deque([start])
+    path = []
+    while q:
+        current = q.popleft()
+        if visited[current]:  # 이미 방문한 노드면 종료
+            if current in path:  # 현재 노드가 사이클에 포함되었는지 확인
+                cycle_start = path.index(current)
+                return len(path) - cycle_start  # 사이클의 길이 반환
+            return 0  # 사이클이 없으면 0 반환
+        visited[current] = 1
+        path.append(current)
+        q.append(arr[current])
+    return 0
 
-def dfs(x):
-    global result
-    visited[x] = True
-    cycle.append(x) #사이클을 이루는 팀을 확인하기 위함
-    number = numbers[x]
-    
-    if visited[number]: #방문가능한 곳이 끝났는지
-        if number in cycle: #사이클 가능 여부
-            result += cycle[cycle.index(number):] #사이클 되는 구간 부터만 팀을 이룸
-        return
-    else:
-        dfs(number)
-
-
-for _ in range(int(input())):
+T = int(input())
+for _ in range(T):
     N = int(input())
-    numbers = [0] + list(map(int, input().split()))
-    visited = [True] + [False] * N #방문 여부
-    result = []
-    
-    for i in range(1, N+1):
-        if not visited[i]: #방문 안한 곳이라면
-            cycle = []
-            dfs(i) #DFS 함수 돌림
-            
-    print(N - len(result)) #팀에 없는 사람 수
+    arr = [0] + list(map(int, input().split()))
+    visited = [0] * (N + 1)
+
+    total = N
+    for i in range(1, N + 1):
+        if not visited[i]:
+            total -= bfs(i)
+    print(total)
