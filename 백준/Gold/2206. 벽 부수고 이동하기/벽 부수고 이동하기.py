@@ -11,10 +11,10 @@ def bfs():
 
     while q:
         x, y, chance, t = q.popleft()
+        if x==N-1 and y==M-1:
+            return t
         for i in range(4):
             nx, ny = x+dx[i], y+dy[i]
-            if nx==N-1 and ny==M-1:
-                return t+1
 
             if 0<=nx<N and 0<=ny<M:
                 if chance==1:
@@ -30,6 +30,6 @@ def bfs():
                         q.append((nx, ny, chance-1, t+1))
                         visited[nx][ny] = 2
 
-    return visited[N-1][M-1] if visited[N-1][M-1]!=0 else -1
+    return -1
 
 print(bfs())
