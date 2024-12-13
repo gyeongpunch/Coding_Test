@@ -1,7 +1,7 @@
 from collections import deque
 
 N, K = map(int, input().split())
-visited = [-1]*200001
+visited = [-1]*100001
 
 def bfs(N, K):
     q = deque([N])
@@ -13,7 +13,7 @@ def bfs(N, K):
         next = [X * 2, X + 1, X - 1]
 
         for np in next:
-            if 0 <= np <= 200000:
+            if 0 <= np <= 100000:
                 if np == X * 2:
                     if visited[np]==-1 or (visited[np]!=-1 and visited[np]>visited[X]):
                         q.append(np)
