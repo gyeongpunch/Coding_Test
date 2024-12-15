@@ -14,6 +14,9 @@ def bfs():
     while q:
         x, y, use = q.popleft()
 
+        if x==N-1 and y==M-1:
+            return visited[x][y][use]
+
         if use < K:
             for i in range(8):
                 nx, ny = x+hdx[i], y+hdy[i]
@@ -25,6 +28,6 @@ def bfs():
             if 0<=nx<N and 0<=ny<M and arr[nx][ny]!=1 and visited[nx][ny][use]==-1:
                 q.append((nx, ny, use))
                 visited[nx][ny][use] = visited[x][y][use] + 1
-    result = [visited[N-1][M-1][i] for i in range(K+1) if visited[N-1][M-1][i] != -1]
-    return min(result) if result else -1
+
+    return -1
 print(bfs())
