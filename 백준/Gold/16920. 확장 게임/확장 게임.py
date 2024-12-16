@@ -1,45 +1,42 @@
-import sys
 from collections import deque
-input = sys.stdin.readline
 
-n,m,p = map(int,input().split())
-castle = [deque() for _ in range(p+1)]
+N, M, P = map(int,input().split())
+total_q = [deque() for _ in range(P+1)]
 power = [0]+list(map(int,input().split()))
-graph = [list(input().rstrip()) for _ in range(n)]
-cnt = [0]*(p+1)
+arr = [list(input().strip()) for _ in range(N)]
+cnt = [0]*(P+1)
+dx, dy = [0, 1, 0, -1], [1, 0, -1, 0]
 
+for i in range(N):
+    for j in range(M):
+        if '1' <= arr[i][j] <= '9':
+            p = int(arr[i][j])
+            cnt[p] += 1
+            total_q[p].append((i, j))
 
-for i in range(n):
-    for j in range(m):
-        if graph[i][j] != '.' and graph[i][j] != '#':
-            cnt[int(graph[i][j])] += 1
-            castle[int(graph[i][j])].append((i,j))
-
-
-
-moves = [(0,1),(1,0),(0,-1),(-1,0)]
 def bfs():
     is_moved = True
     while is_moved:
         is_moved = False
-        for i in range(1,p+1):
-            if not castle[i]: # 비어있다면 continue
+        for i in range(1, P+1):
+            if not total_q[i]:
                 continue
-            q = castle[i]
+
+            q = total_q[i]
             for _ in range(power[i]):
-                if not q: # power 연산 중에 비어졌다면 break
+                if not q:
                     break
+
                 for _ in range(len(q)):
-                    x,y = q.popleft()
-                    for movex,movey in moves:
-                        nx = x + movex
-                        ny = y + movey
-                        if 0 <= nx < n and 0 <= ny < m and graph[nx][ny] == '.':
-                            graph[nx][ny] = str(i)
-                            q.append((nx,ny))
+                    x, y = q.popleft()
+                    for j in range(4):
+                        nx, ny = x+dx[j], y+dy[j]
+
+                        if 0<=nx<N and 0<=ny<M and arr[nx][ny] == '.':
+                            arr[nx][ny] = str(i)
+                            q.append((nx, ny))
                             cnt[i] += 1
                             is_moved = True
-
         
 bfs()
 print(*cnt[1:])
