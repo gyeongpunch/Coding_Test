@@ -1,48 +1,26 @@
-def check_max(candy):
-    max_candy = 0
-
-    for i in range(len(candy)):
-        count = 1
-        for j in range(1, len(candy[i])):
-            if candy[i][j] == candy[i][j - 1]:
-                count += 1
-            else:
-                max_candy = max(max_candy, count)
-                count = 1
-        max_candy = max(max_candy, count)
-
-    for j in range(len(candy)):
-        count = 1
-        for i in range(1, len(candy)):
-            if candy[i][j] == candy[i - 1][j]:
-                count += 1
-            else:
-                max_candy = max(max_candy, count)
-                count = 1
-        max_candy = max(max_candy, count)
-
-    return max_candy
-
-
-def candy_game(board, n):
-    max_candies = 0
-
-    for i in range(n):
+n=int(input())
+def mx(lst):
+    xl=[]
+    lst=[[None]*n]+lst+[[None]*n]
+    for i,l in enumerate(lst[1:n+1]):
+        st=0
         for j in range(n):
-            if j + 1 < n:
-                board[i][j], board[i][j + 1] = board[i][j + 1], board[i][j]
-                max_candies = max(max_candies, check_max(board))
-                board[i][j], board[i][j + 1] = board[i][j + 1], board[i][j]
-
-            if i + 1 < n:
-                board[i][j], board[i + 1][j] = board[i + 1][j], board[i][j]
-                max_candies = max(max_candies, check_max(board))
-                board[i][j], board[i + 1][j] = board[i + 1][j], board[i][j]
-
-    return max_candies
-
-
-n = int(input())
-board = [list(input().strip()) for _ in range(n)]
-
-print(candy_game(board, n))
+            if j<n-1 and l[j]==l[j+1]: continue
+            xl.append(j-st+1)
+            if j<n-2 and l[j]==l[j+2]: xl[-1]+=1
+            if st>0 and l[j] in [lst[i][st-1], lst[i+2][st-1]]:
+                xl.append(j-st+2)
+                for c in l[st-2:-1:-1]:
+                    if c==l[j]: xl[-1]+=1
+                    else: break
+            if j<n-1 and l[j] in [lst[i][j+1], lst[i+2][j+1]]:
+                xl.append(j-st+2)
+                for c in l[j+2:]:
+                    if c==l[j]: xl[-1]+=1
+                    else: break
+            st=j+1
+    return max(xl)
+    
+rows=[list(input()) for _ in range(n)]
+cols=list(map(list, zip(*rows)))
+print(max([mx(rows), mx(cols)]))
