@@ -9,11 +9,14 @@ def bfs():
 
     while q:
         x = q.popleft()
+        if x == G:
+            return visited[x]
+
         n_pos = [x+U, x-D]
         for nx in n_pos:
             if 0<nx<=F and (visited[nx]==-1 or visited[nx] > visited[x] + 1):
                 q.append(nx)
                 visited[nx] = visited[x] + 1
-    return visited[G] if visited[G]!=-1 else 'use the stairs'
+    return 'use the stairs'
 
 print(bfs())
