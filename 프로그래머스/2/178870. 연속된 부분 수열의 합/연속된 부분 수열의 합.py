@@ -15,8 +15,8 @@ def solution(sequence, k):
                 min_length = window_length
                 best_start, best_end = left, right
                 
-            elif window_length == min_length and left < best_start:
-                best_start, best_end = left, right
+            # elif window_length == min_length and left < best_start:
+            #     best_start, best_end = left, right
 
             current_sum -= sequence[left]
             left += 1
