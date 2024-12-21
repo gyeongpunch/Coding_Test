@@ -1,42 +1,29 @@
 #include <string>
 #include <vector>
-#include <iostream>
-#include <queue>
+#include <algorithm>
 #include <numeric>
-
 using namespace std;
 
 int solution(vector<int> queue1, vector<int> queue2) {
     int answer = 0;
-    int total = queue1.size() * 4;
-    long long left = accumulate(queue1.begin(), queue1.end(), 0ll);
-    long long right = accumulate(queue2.begin(), queue2.end(), 0ll);
-    long long target = left + right;
-    
-    if(target % 2 != 0){
-        return -1;
-    }
-    target /= 2;
-    
-    deque<int> q1(queue1.begin(), queue1.end());
-    deque<int> q2(queue2.begin(), queue2.end());
-    
-    while (left != right && answer <= total) {
-        if (left > right) {
-            int val = q1.front();
-            q1.pop_front();
-            left -= val;
-            right += val;
-            q2.push_back(val);
-        } else {
-            int val = q2.front();
-            q2.pop_front();
-            right -= val;
-            left += val;
-            q1.push_back(val);
-        }
+    long long sum1 = accumulate(queue1.begin(), queue1.end(), 0ll);
+    long long sum2 = accumulate(queue2.begin(), queue2.end(), 0ll);
+    int idx1 = 0, idx2 = 0;
+    int MAX = queue1.size()*2 + queue2.size()*2;
+    while (sum1 != sum2) {
         answer++;
+        if (answer > MAX)
+            return -1;
+        if (sum1 < sum2) {
+            sum1 += queue2[idx2];
+            queue1.push_back(queue2[idx2]);
+            sum2 -= queue2[idx2++];
+        }
+        else {
+            sum2 += queue1[idx1];
+            queue2.push_back(queue1[idx1]);
+            sum1 -= queue1[idx1++];
+        }
     }
-    
-    return left==right ? answer : -1;
+    return answer;
 }
