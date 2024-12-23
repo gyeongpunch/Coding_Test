@@ -60,7 +60,7 @@ int main(void){
 
         for(int i=0; i<K; i++){
             auto[x, y] = loc[i];
-            if(arr[x][y]==1 && visited[x][y]==0){
+            if(visited[x][y]==0){
                 cnt++;
                 bfs(x, y);
             }
