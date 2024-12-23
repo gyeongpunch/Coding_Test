@@ -2,13 +2,14 @@
 #include <vector>
 #include <queue>
 #include <algorithm>
+#include <cstring>
 
 using namespace std;
 
 int M, N, K;
 
-vector<vector<int>> arr;
-vector<vector<int>> visited;
+int arr[51][51];
+int visited[51][51];
 
 int dx[4] = {0, 1, 0, -1};
 int dy[4] = {1, 0, -1, 0};
@@ -35,15 +36,18 @@ void bfs(int x, int y){
 }
 
 int main(void){
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+
     int T;
     cin >> T;
 
-    for(int t=0; t<T; t++){
+    while(T--){
         cin >> M >> N >> K;
         int cnt = 0;
 
-        arr = vector<vector<int>>(N, vector<int>(M, 0));
-        visited = vector<vector<int>>(N, vector<int>(M, 0));
+        memset(arr, 0, sizeof(arr));
+        memset(visited, 0, sizeof(visited));
         vector<pair<int, int>> loc;
 
         for(int i=0; i<K; i++){
