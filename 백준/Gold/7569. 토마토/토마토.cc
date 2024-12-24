@@ -41,6 +41,10 @@ int bfs(int& cnt){
 }
 
 int main(void){
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+
+
     cin >> M >> N >> K;
     arr = vector<vector<vector<int>>>(K, vector<vector<int>> (N, vector<int>(M, 0)));
     visited = vector<vector<vector<int>>>(K, vector<vector<int>>(N, vector<int>(M, -1)));
