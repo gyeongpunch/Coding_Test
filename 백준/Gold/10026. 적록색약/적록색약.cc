@@ -17,7 +17,6 @@ void bfs(int x, int y, bool is_nono){
     q.push({x, y});
     visited[x][y]++;
 
-    char current_color = arr[x][y];
     while(!q.empty()){
         auto[cx, cy] = q.front();
         q.pop();
@@ -27,18 +26,18 @@ void bfs(int x, int y, bool is_nono){
             int ny = cy + dy[i];
             if(0 <= nx && nx < N && 0 <= ny && ny < N && visited[nx][ny] == visited[cx][cy] - 1){
                 if(is_nono){
-                    if ((current_color == 'R' || current_color == 'G') && (arr[nx][ny] == 'R' || arr[nx][ny] == 'G')){
+                    if (arr[nx][ny]!='B' && arr[cx][cy]!='B'){
                         q.push({nx, ny});
                         visited[nx][ny]++;
                     }
-                    else if(arr[nx][ny] == current_color){
+                    else if(arr[nx][ny]=='B' && arr[cx][cy]=='B'){
                         q.push({nx, ny});
                         visited[nx][ny]++;
                     }
                     
                 }
                 else{
-                    if(arr[nx][ny]==current_color){
+                    if(arr[nx][ny]==arr[cx][cy]){
                         q.push({nx, ny});
                         visited[nx][ny]++;
                     }
