@@ -31,6 +31,9 @@ int bfs(int now, int N, const vector<int>& arr, vector<int>& visited){
 int main(void){
     // freopen("input.txt", "r", stdin);
 
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+
     int T;
     cin >> T;
     while(T--){
@@ -53,7 +56,5 @@ int main(void){
         cout << result << endl;
 
     }
-
-
     return 0;
 }
