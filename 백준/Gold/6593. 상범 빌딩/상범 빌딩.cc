@@ -18,6 +18,7 @@ int dz[6] = {0, 0, 0, 0, 1, -1};
 struct Point{
     int x, y, z;
     Point() : x(0), y(0), z(0) {}
+    Point(int x, int y, int z) : x(x), y(y), z(z) {}
 };
 
 Point Start;
@@ -51,6 +52,10 @@ int bfs(){
 
 int main(void){
     // freopen("input.txt", "r", stdin);
+
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+
     while(1){
         cin >> L >> R >> C;
         if(L==0 && R==0 && C==0) return 0;
@@ -59,33 +64,22 @@ int main(void){
         visited = vector<vector<vector<int>>>(L, vector<vector<int>>(R, vector<int>(C, -1)));
         
         for(int i=0; i<L; i++){
+            if (i > 0) cin.ignore();
             for(int j=0; j<R; j++){
+                string row;
+                cin >> row;
                 for(int k=0; k<C; k++){
-                    cin >> arr[i][j][k];
+                    arr[i][j][k] = row[k];
                     if(arr[i][j][k] == 'S'){
-                        Start.z = i;
-                        Start.x = j;
-                        Start.y = k;
+                        Start = {j, k, i};
                     }
                     if(arr[i][j][k] == 'E'){
-                        End.z = i;
-                        End.x = j;
-                        End.y = k;
+                        End = {j, k, i};
                     }
                 }
             }
         }
 
-
-        // for(int i=0; i<L; i++){
-        //     for(int j=0; j<R; j++){
-        //         for(int k=0; k<C; k++){
-        //             cout << arr[i][j][k];
-        //         }
-        //         cout << endl;
-        //     }
-        //     cout << endl;
-        // }
         int result = bfs();
 
         if(result==-1){
