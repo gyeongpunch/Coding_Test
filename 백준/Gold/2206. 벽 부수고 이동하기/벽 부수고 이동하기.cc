@@ -57,6 +57,9 @@ int bfs(){
 int main(void){
     // freopen("input.txt", "r", stdin);
 
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+
     cin >> N >> M;
 
     arr = vector<vector<char>>(N, vector<char>(M, 0));
