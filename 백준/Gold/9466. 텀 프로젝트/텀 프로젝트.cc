@@ -1,60 +1,55 @@
 #include <iostream>
 #include <vector>
-#include <queue>
 
 using namespace std;
 
-int bfs(int now, int N, const vector<int>& arr, vector<int>& visited){
-    vector<int> check;
-    queue<int> q;
-    q.push(now);
+int T, N;
+vector<int> arr;
+vector<int> visited, finished;
+int cnt;
 
-    while(!q.empty()){
-        int x = q.front();
-        q.pop();
+void dfs(int now) {
+    visited[now] = 1;
+    int next = arr[now];
 
-        if(visited[x]==1){
-            for(int i=0; i<check.size(); i++){
-                if(check[i] == x){
-                    return check.size() - i;
-                }
-            }
-            return 0;
-        }
-        visited[x] = 1;
-        q.push(arr[x]-1);
-        check.push_back(x);
+    if(!visited[next]) {
+        dfs(next);
     }
-    return 0;
+    else if(!finished[next]) {
+        for(int i=next; i!=now; i=arr[i]) {
+            cnt++;
+        }
+        cnt++;
+    }
+
+    finished[now] = 1;
 }
 
-int main(void){
-    // freopen("input.txt", "r", stdin);
-
+int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
 
-    int T;
     cin >> T;
-    while(T--){
-        int N;
+    while (T--) {
         cin >> N;
-        vector<int> arr(N, 0);
-        vector<int> visited(N, 0);
-        for(int i=0; i<N; i++){
+
+        arr = vector<int>(N + 1);
+        visited = vector<int>(N + 1, 0);
+        finished = vector<int>(N + 1, 0);
+        cnt = 0;
+
+        for (int i=1; i<=N; i++) {
             cin >> arr[i];
         }
-        
-        int result = N;
 
-        for(int i=0; i<N; i++){
-            if(visited[i]==0){
-                result -= bfs(i, N, arr, visited);
+        for (int i= 1; i<=N; i++) {
+            if (!visited[i]) {
+                dfs(i);
             }
         }
 
-        cout << result << endl;
-
+        cout << N - cnt << '\n';
     }
+
     return 0;
 }
