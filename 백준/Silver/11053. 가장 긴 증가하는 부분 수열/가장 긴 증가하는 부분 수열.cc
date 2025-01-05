@@ -14,11 +14,11 @@ int main(void){
     cin >> N;
     int arr[N];
     int dp[1000];
-    fill(dp, dp + N, 1);
-    int mx=0;
+    int mx=1;
 
     for(int i=0; i<N; i++){
         cin >> arr[i];
+        dp[i] = 1;
         for(int j=0; j<i; j++){
             if(arr[i] > arr[j]){
                 dp[i] = max(dp[i], dp[j]+1);
