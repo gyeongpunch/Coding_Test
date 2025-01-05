@@ -25,8 +25,7 @@ int main(void){
                 dp[i][j] = max(dp[i][j], dp[i-1][j-1]);
             }
             if(j%2 + 1 == arr[i]){
-                dp[i][j]++;
-                mx = max(mx, dp[i][j]);
+                mx = max(mx, ++dp[i][j]);
             }
         }
     }
