@@ -1,49 +1,46 @@
 #include <iostream>
-#include <vector>
-#include <queue>
 #include <string>
-#include <tuple>
+#include <queue>
 
 using namespace std;
 
-vector<vector<vector<char>>> arr;
-vector<vector<vector<int>>> visited;
-
 int L, R, C;
+
+char arr[30][30][30];
+
+struct Point{
+    int x, y, z;
+};
+Point Start;
+Point End;
 
 int dx[6] = {1, -1, 0, 0, 0, 0};
 int dy[6] = {0, 0, 1, -1, 0, 0};
 int dz[6] = {0, 0, 0, 0, 1, -1};
 
-struct Point{
-    int x, y, z;
-    Point() : x(0), y(0), z(0) {}
-    Point(int x, int y, int z) : x(x), y(y), z(z) {}
-};
-
-Point Start;
-Point End;
-
 int bfs(){
-    queue<tuple<int, int, int>> q;
-    q.push({Start.x, Start.y, Start.z});
-    visited[Start.z][Start.x][Start.y] = 0;
+    int visited[30][30][30] = {0};
+    queue<Point> q;
+    q.push(Start);
+    visited[Start.z][Start.x][Start.y] = 1;
 
     while(!q.empty()){
-        auto[x, y, z] = q.front();
+        int cx = q.front().x;
+        int cy = q.front().y;
+        int cz = q.front().z;
         q.pop();
 
-        if(x==End.x && y==End.y && z==End.z){
-            return visited[z][x][y];
+        if(cx==End.x && cy==End.y && cz==End.z){
+            return visited[cz][cx][cy] - 1;
         }
 
         for(int i=0; i<6; i++){
-            int nx = x + dx[i];
-            int ny = y + dy[i];
-            int nz = z + dz[i];
-            if(0<=nx && nx<R && 0<=ny && ny<C && 0<=nz && nz<L && arr[nz][nx][ny]!='#' && visited[nz][nx][ny]==-1){
+            int nx = cx + dx[i];
+            int ny = cy + dy[i];
+            int nz = cz + dz[i];
+            if(0<=nx && nx<R && 0<=ny && ny<C && 0<=nz && nz<L && arr[nz][nx][ny]!='#' && visited[nz][nx][ny]==0){
                 q.push({nx, ny, nz});
-                visited[nz][nx][ny] = visited[z][x][y] + 1;
+                visited[nz][nx][ny] = visited[cz][cx][cy] + 1;
             }
         }
     }
@@ -56,15 +53,12 @@ int main(void){
     ios::sync_with_stdio(false);
     cin.tie(0);
 
-    while(1){
+    while (1){
         cin >> L >> R >> C;
-        if(L==0 && R==0 && C==0) return 0;
-
-        arr = vector<vector<vector<char>>>(L, vector<vector<char>>(R, vector<char>(C)));
-        visited = vector<vector<vector<int>>>(L, vector<vector<int>>(R, vector<int>(C, -1)));
-        
+        if(L==0 && R==0 && C==0){
+            break;
+        }
         for(int i=0; i<L; i++){
-            if (i > 0) cin.ignore();
             for(int j=0; j<R; j++){
                 string row;
                 cin >> row;
@@ -73,7 +67,7 @@ int main(void){
                     if(arr[i][j][k] == 'S'){
                         Start = {j, k, i};
                     }
-                    if(arr[i][j][k] == 'E'){
+                    else if(arr[i][j][k] == 'E'){
                         End = {j, k, i};
                     }
                 }
@@ -81,14 +75,14 @@ int main(void){
         }
 
         int result = bfs();
-
-        if(result==-1){
-            cout << "Trapped!" << endl;
+        if(result != -1){
+            cout << "Escaped in " << result << " minute(s)." << '\n';
         }
         else{
-            cout << "Escaped in " << result << " minute(s)." << endl;
+            cout << "Trapped!" << '\n';
         }
 
     }
+
     return 0;
 }
