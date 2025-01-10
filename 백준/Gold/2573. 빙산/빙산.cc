@@ -76,6 +76,9 @@ void Melt(){
 int main(void){
     // freopen("input.txt", "r", stdin);
 
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+
     cin >> N >> M;
     for(int i=0; i<N; i++){
         for(int j=0; j<M; j++){
