@@ -26,7 +26,7 @@ int main(void){
         }
 
         for(int nx : {now-1, now+1, now*2}){
-            if(0<=nx && nx<MAX && (arr[nx]==-1 || arr[nx] > arr[now]+1)){
+            if(0<=nx && nx<MAX && arr[nx]==-1){
                 if(nx==now*2){
                     dq.push_front(nx);
                     arr[nx] = arr[now];
