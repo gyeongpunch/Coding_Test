@@ -3,7 +3,6 @@
 #include <vector>
 using namespace std;
 
-// 문자열을 특정 구분자로 나누는 함수
 vector<string> split(const string& str, char delimiter) {
     vector<string> tokens;
     stringstream ss(str);
@@ -15,25 +14,22 @@ vector<string> split(const string& str, char delimiter) {
 }
 
 int main() {
-    string expression;
-    cin >> expression;
+    string commands;
+    cin >> commands;
 
-    // '-'로 나누기
-    vector<string> parts = split(expression, '-');
+    vector<string> parts = split(commands, '-');
 
     int result = 0;
 
-    // 첫 번째 부분은 더하기
-    vector<string> firstPart = split(parts[0], '+');
-    for (const string& num : firstPart) {
-        result += stoi(num); // 숫자 더하기
+    vector<string> first = split(parts[0], '+');
+    for (string& num : first) {
+        result += stoi(num);
     }
 
-    // 나머지 부분은 빼기
-    for (size_t i = 1; i < parts.size(); i++) {
-        vector<string> subPart = split(parts[i], '+');
-        for (const string& num : subPart) {
-            result -= stoi(num); // 숫자 빼기
+    for (int i = 1; i < parts.size(); i++) {
+        vector<string> sub_part = split(parts[i], '+');
+        for (string& num : sub_part) {
+            result -= stoi(num);
         }
     }
 
