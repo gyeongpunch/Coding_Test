@@ -22,7 +22,8 @@ int N;
 long long arr[MAX];
 
 struct Three{
-    long long f, s, t, sm;
+    int f, s, t;
+    long long sm;
 };
 
 int main(void){
@@ -44,9 +45,9 @@ int main(void){
         while(s < e){
             long long sm = arr[i] + arr[s] + arr[e];
             if(llabs(sm) < llabs(Mn.sm)){
-                Mn.f = arr[i];
-                Mn.s = arr[s];
-                Mn.t = arr[e];
+                Mn.f = i;
+                Mn.s = s;
+                Mn.t = e;
                 Mn.sm = sm;
             }
             if(sm > 0){
@@ -58,7 +59,7 @@ int main(void){
         }
     }
 
-    cout << Mn.f << ' ' << Mn.s << ' ' << Mn.t << '\n';
+    cout << arr[Mn.f] << ' ' << arr[Mn.s] << ' ' << arr[Mn.t] << '\n';
 
     return 0;
 }
