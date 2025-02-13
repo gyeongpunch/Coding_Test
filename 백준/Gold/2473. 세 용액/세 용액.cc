@@ -14,9 +14,10 @@ using namespace std;
 // 모두 10억인 경우 int형을 사용하면 type overflow가 발생하므로 long long으로 sum값을 선언합니다.
 // Struct = {x, y, z} 이게 안 된다고 합니다. 객체를 생성하는 거라고 하네요. 그냥 하나하나 대입하겠습니다.
 // abs는 int형을 반환한다고 합니다. llabs를 사용하여 type overflow를 방지합시다.
+// sum 값이 0일 때 Mn.sm가 0이면 break하니까 풀렸습니다. 그런데 왜 그런거지,,, 정답을 알려줘~_~
 
-const int MAX = 5004;
-const long long SUM_MAX = 1e18;
+const int MAX = 5000;
+const long long SUM_MAX = 3000000001;
 
 int N;
 long long arr[MAX];
@@ -45,11 +46,11 @@ int main(void){
         int s = i+1, e = N-1;
         while(s < e){
             long long sm = arr[i] + arr[s] + arr[e];
-            if(llabs(sm) < llabs(Mn.sm)){
+            if(llabs(sm) < Mn.sm){
                 Mn.f = i;
                 Mn.s = s;
                 Mn.t = e;
-                Mn.sm = sm;
+                Mn.sm = llabs(sm);
             }
             if(Mn.sm == 0){
                 Is_finish = true;
