@@ -40,6 +40,7 @@ int main(void){
 
     Three Mn;
     Mn.sm = SUM_MAX;
+    bool Is_finish = false;
     for(int i=0; i<N-2; i++){
         int s = i+1, e = N-1;
         while(s < e){
@@ -50,12 +51,20 @@ int main(void){
                 Mn.t = e;
                 Mn.sm = sm;
             }
+            if(Mn.sm == 0){
+                Is_finish = true;
+                break;
+            }
+
             if(sm > 0){
                 e--;
             }
             else{
                 s++;
             }
+        }
+        if(Is_finish){
+            break;
         }
     }
 
