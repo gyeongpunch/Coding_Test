@@ -53,8 +53,10 @@ void rotate(){
     for(int i=0; i<N; i++){
         for(int j=0; j<N; j++){
             arrTmp[N-j-1][i].num = arr[i][j];
+            arrTmp[i][j].isAvail = true;
         }
     }
+
     for(int i=0; i<N; i++){
         for(int j=0; j<N; j++){
             arr[i][j] = arrTmp[i][j].num;
@@ -68,21 +70,32 @@ void drop(){
         for(int i=N-1; i>-1; i--){
             if(arrTmp[i][j].num == 0) continue;
             
-            if(i != nowI){
-                arrTmp[nowI][j].num = arrTmp[i][j].num;
-                arrTmp[i][j].num = 0;
-            }
-
             if(nowI == N-1){
-                nowI--;
+                if(i == nowI){
+                    nowI--;
+                }
+                else{
+                    arrTmp[nowI][j].num = arrTmp[i][j].num;
+                    arrTmp[i][j].num = 0;
+                    nowI--;
+                }
             }
-            else if(!arrTmp[nowI + 1][j].isAvail || arrTmp[nowI + 1][j].num != arrTmp[nowI][j].num){
-                nowI--;
-            }
-            else {
-                arrTmp[nowI + 1][j].num *= 2;
-                arrTmp[nowI + 1][j].isAvail = false;
-                arrTmp[nowI][j].num = 0;
+            else{
+                if(!arrTmp[nowI + 1][j].isAvail || arrTmp[nowI + 1][j].num != arrTmp[i][j].num){
+                    if(i == nowI){
+                        nowI--;
+                    }
+                    else{
+                        arrTmp[nowI][j].num = arrTmp[i][j].num;
+                        arrTmp[i][j].num = 0;
+                        nowI--;
+                    }
+                }
+                else{
+                    arrTmp[nowI + 1][j].num *= 2;
+                    arrTmp[nowI + 1][j].isAvail = false;
+                    arrTmp[i][j].num = 0;
+                }
             }
         }
     }
