@@ -16,7 +16,10 @@ int main() {
     cin >> Leader >> Follower;
 
     for(int i=0; i<N; i++){
-        result += 1 + (arr[i] - Leader + Follower - 1) / Follower;
+        result += 1;
+        if(arr[i] - Leader > 0){
+            result += (arr[i] - Leader + Follower - 1) / Follower;
+        }
     }
 
     cout << result << '\n';
