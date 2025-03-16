@@ -5,7 +5,7 @@ const int MAX_N = 1000000;
 
 int N;
 int arr[MAX_N];
-int result = 0;
+long long result = 0;
 int Leader, Follower;
 
 int main() {
