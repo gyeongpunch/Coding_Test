@@ -48,8 +48,6 @@ string get_result(const int &X, const int &O){
         xbCnt += bingo.xB[i];
         obCnt += bingo.oB[i];
     }
-
-    if(xbCnt == 0 && obCnt == 0 && X+O < 9) return "invalid";
     
     if(xbCnt > 0){
         if(X != O + 1) return "invalid"; 
@@ -58,7 +56,6 @@ string get_result(const int &X, const int &O){
         if(X != O) return "invalid";
     }
     
-
     if(xbCnt > 0 && obCnt > 0) return "invalid";
     
     else if(xbCnt == 0 && obCnt == 0) {
@@ -69,16 +66,6 @@ string get_result(const int &X, const int &O){
         if(xbCnt > 0){
             if(bingo.xB[0] + bingo.xB[1] + bingo.xB[2] > 2) return "invalid";
             else if(bingo.xB[3] + bingo.xB[4] + bingo.xB[5] > 2) return "invalid";
-            else if(bingo.xB[6] == 1){
-                if(bingo.xB[0] == 1 && bingo.xB[4] + bingo.xB[5] > 1) return "invalid";
-                else if(bingo.xB[1] == 1 && bingo.xB[3] + bingo.xB[5] > 1) return "invalid";
-                else if(bingo.xB[2] == 1 && bingo.xB[3] + bingo.xB[4] > 1) return "invalid";
-            }
-            else if(bingo.xB[7] == 1){
-                if(bingo.xB[0] == 1 && bingo.xB[3] + bingo.xB[4] > 1) return "invalid";
-                else if(bingo.xB[1] == 1 && bingo.xB[3] + bingo.xB[5] > 1) return "invalid";
-                else if(bingo.xB[2] == 1 && bingo.xB[4] + bingo.xB[5] > 1) return "invalid";
-            }
             return "valid";
         }
         else if (obCnt > 0){
@@ -86,16 +73,6 @@ string get_result(const int &X, const int &O){
 
             if(bingo.oB[0] + bingo.oB[1] + bingo.oB[2] > 2) return "invalid";
             else if(bingo.oB[3] + bingo.oB[4] + bingo.oB[5] > 2) return "invalid";
-            else if(bingo.oB[6] == 1){
-                if(bingo.oB[0] == 1 && bingo.oB[4] + bingo.oB[5] > 1) return "invalid";
-                else if(bingo.oB[1] == 1 && bingo.oB[3] + bingo.oB[5] > 1) return "invalid";
-                else if(bingo.oB[2] == 1 && bingo.oB[3] + bingo.oB[4] > 1) return "invalid";
-            }
-            else if(bingo.oB[7] == 1){
-                if(bingo.oB[0] == 1 && bingo.oB[3] + bingo.oB[4] > 1) return "invalid";
-                else if(bingo.oB[1] == 1 && bingo.oB[3] + bingo.oB[5] > 1) return "invalid";
-                else if(bingo.oB[2] == 1 && bingo.oB[4] + bingo.oB[5] > 1) return "invalid";
-            }
             return "valid";
         }
     }
