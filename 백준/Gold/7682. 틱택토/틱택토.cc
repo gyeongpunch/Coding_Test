@@ -56,18 +56,8 @@ string get_result(const int &X, const int &O){
         else return "invalid";
     }
     else {
-        if(xbCnt > 0){
-            if(X != O + 1) return "invalid"; 
-
-            if(bingo.xB[0] + bingo.xB[1] + bingo.xB[2] > 2) return "invalid";
-            else if(bingo.xB[3] + bingo.xB[4] + bingo.xB[5] > 2) return "invalid";
-        }
-        else if (obCnt > 0){
-            if(X != O) return "invalid";
-
-            if(bingo.oB[0] + bingo.oB[1] + bingo.oB[2] > 2) return "invalid";
-            else if(bingo.oB[3] + bingo.oB[4] + bingo.oB[5] > 2) return "invalid";
-        }
+        if(xbCnt > 0 && X != O + 1) return "invalid"; 
+        else if (obCnt > 0 && X != O) return "invalid";
     }
     return "valid";
 }
@@ -97,7 +87,6 @@ int main(void){
             }
         }
 
-        // X는 O보다 항상 같거나 1만큼만 커야합니다.
         if(xCnt-oCnt < 0 || 1 < xCnt-oCnt){
             result = "invalid";
         }
