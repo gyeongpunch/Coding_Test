@@ -52,8 +52,7 @@ string get_result(const int &X, const int &O){
     if(xbCnt > 0 && obCnt > 0) return "invalid";
     
     else if(xbCnt == 0 && obCnt == 0) {
-        if(X+O == 9) return "valid";
-        else return "invalid";
+        if(X+O != 9) return "invalid";
     }
     else {
         if(xbCnt > 0 && X != O + 1) return "invalid"; 
