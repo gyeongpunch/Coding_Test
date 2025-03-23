@@ -14,25 +14,21 @@ using namespace std;
 
 vector<int> tree[MAX_N];
 int listen[MAX_N];
-int subTreeSize[MAX_N];
-int height[MAX_N];
 int N;
 
-int get_listen(int now){
+void get_listen(int now){
     vector<int> v;
 
     for(int child : tree[now]){
-        v.push_back(get_listen(child));
-    }
-
-    sort(v.begin(), v.end(), greater<int>());
-
-    int maxTime = 0;
-    for (int i = 0; i < v.size(); i++) {
-        maxTime = max(maxTime, v[i] + i + 1);
+        get_listen(child);
+        v.push_back(listen[child]);
     }
     
-    return maxTime;
+    sort(v.begin(), v.end(), greater<int>());
+
+    for(int i=0; i<tree[now].size(); i++){
+        listen[now] = max(listen[now], v[i] + i + 1);
+    }
 }
 
 int main(void){
@@ -51,7 +47,9 @@ int main(void){
         tree[a].push_back(i);
     }
 
-    cout << get_listen(0) << '\n';
+    get_listen(0);
+
+    cout << listen[0] << '\n';
 
     return 0;
 }
