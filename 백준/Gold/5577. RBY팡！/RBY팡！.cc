@@ -21,26 +21,47 @@ int arrOrigin[MAX_N];
 int result = MAX_N;
 
 void simulation(vector<int> arr){
-    bool flag = true;
-    while(flag) {
-        flag = false;
-        vector<int> arrTmp;
-        for (int i = 0; i < arr.size();) {
-            int j = i;
-            while(j < arr.size() && arr[j] == arr[i])
-                j++;
-            if(j - i >= 4) {
-                flag = true;
-            }
-            else {
-                for(int k = i; k < j; k++)
-                    arrTmp.push_back(arr[k]);
-            }
-            i = j;
+    vector<Info> stk;
+    bool flag = false;
+
+    for(int n : arr){
+        if(stk.empty()){
+            stk.push_back({n, 1});
         }
-        arr = arrTmp;
+        else{
+            if(stk.back().n == n){
+                stk.push_back({n, stk.back().cnt + 1});
+            }
+            else{
+                if(stk.back().cnt >= 4){
+                    int target = stk.back().n;
+
+                    while(!stk.empty() && stk.back().n == target){
+                        stk.pop_back();
+                    }
+
+                    if(!stk.empty() && stk.back().n == n){
+                        stk.push_back({n, stk.back().cnt + 1});
+                    }
+                    else{
+                        stk.push_back({n, 1});
+                    }
+                }
+                else{
+                    stk.push_back({n, 1});
+                }
+            }
+        }
     }
-    result = min(result, (int)arr.size());
+    if(!stk.empty() && stk.back().cnt >= 4){
+        int target = stk.back().n;
+    
+        while(!stk.empty() && stk.back().n == target){
+            stk.pop_back();
+        }
+    }
+
+    result = min(result, (int)stk.size());
 }
 
 int get_next_same(int idx){
