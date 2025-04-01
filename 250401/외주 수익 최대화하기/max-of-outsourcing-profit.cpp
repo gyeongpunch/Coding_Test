@@ -30,7 +30,7 @@ int main() {
 
     int nowIdx = 0;
     int result = 0;
-    for(int i=1; i<MAX_N+5; i++){
+    for(int i=1; i<=N; i++){
         while(nowIdx < N && arr[nowIdx].end == i){
             dp[i] = max(dp[i], dp[arr[nowIdx].start] + arr[nowIdx].price);
             nowIdx++;
