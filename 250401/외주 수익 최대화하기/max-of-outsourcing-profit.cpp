@@ -32,10 +32,12 @@ int main() {
     int result = 0;
     for(int i=1; i<MAX_N+5; i++){
         while(nowIdx < N && arr[nowIdx].end == i){
-            dp[i] = max(max(dp[i], dp[i-1]), dp[arr[nowIdx].start] + arr[nowIdx].price);
+            dp[i] = max(dp[i], dp[arr[nowIdx].start] + arr[nowIdx].price);
             nowIdx++;
         }
+        dp[i] = max(dp[i], dp[i-1]);
         result = max(result, dp[i]);
+        // cout << dp[i] << ' ';
     }
 
     cout << result << '\n';
