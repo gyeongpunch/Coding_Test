@@ -1,44 +1,34 @@
 #include <iostream>
-#include <algorithm>
 using namespace std;
 
-#define MAX_N 15
-
-struct Info{
-    int start, end, price;
-};
-
 int N;
-Info arr[MAX_N];
-int dp[MAX_N+5];
+int t[15];
+int p[15];
+int result = 0;
 
-bool custom_compare(Info a, Info b){
-    return a.end < b.end;
+void back(int now, int sum){
+    // cout << now << ' ' << sum << '\n';
+
+    if(now >= N){
+        result = max(result, sum);
+        return;
+    }
+
+    back(now+1, sum);
+
+    if(now + t[now] <= N){
+        back(now + t[now], sum + p[now]);
+    }
 }
 
 int main() {
     
     cin >> N;
-    int t, p;
     for(int i=0; i<N; i++){
-        cin >> t >> p;
-
-        arr[i] = {i, i+t, p};
+        cin >> t[i] >> p[i];
     }
 
-    sort(arr, arr+N, custom_compare);
-
-    int nowIdx = 0;
-    int result = 0;
-    for(int i=1; i<=N; i++){
-        while(nowIdx < N && arr[nowIdx].end == i){
-            dp[i] = max(dp[i], dp[arr[nowIdx].start] + arr[nowIdx].price);
-            nowIdx++;
-        }
-        dp[i] = max(dp[i], dp[i-1]);
-        result = max(result, dp[i]);
-        // cout << dp[i] << ' ';
-    }
+    back(0, 0);
 
     cout << result << '\n';
 
