@@ -35,14 +35,18 @@ void pprint(){
 void remove(){
     for(int i=0; i<N; i++){
         for(int j=0; j<N; j++){
-            if(j != N-1 && section[0][i][j] == 0 && L<=abs(arr[i][j] - arr[i][j+1]) && abs(arr[i][j] - arr[i][j+1]) <= R){
-                section[0][i][j] = 1;
-            }
-            if(i != N-1 && section[1][i][j] == 0 && L<=abs(arr[i][j] - arr[i+1][j]) && abs(arr[i][j] - arr[i+1][j]) <= R){
+            if(j != N-1 && section[1][i][j] == 0 && L<=abs(arr[i][j] - arr[i][j+1]) && abs(arr[i][j] - arr[i][j+1]) <= R){
                 section[1][i][j] = 1;
+            }
+            if(i != N-1 && section[0][i][j] == 0 && L<=abs(arr[i][j] - arr[i+1][j]) && abs(arr[i][j] - arr[i+1][j]) <= R){
+                section[0][i][j] = 1;
             }
         }
     }
+}
+
+bool bound_check(int x, int y){
+    return 0<=x && x<N && 0<=y && y<N;
 }
 
 void bfs(int x, int y){
@@ -58,13 +62,29 @@ void bfs(int x, int y){
         vSum += arr[now.x][now.y];
         v.push_back({now.x, now.y});
 
-        if(now.y+1 < N && visited[now.x][now.y+1] == 0 && section[0][now.x][now.y] == 1){
-            q.push({now.x, now.y+1});
-            visited[now.x][now.y+1] = 1;
-        }
-        if (now.x+1 < N && visited[now.x+1][now.y] == 0 && section[1][now.x][now.y] == 1){
-            q.push({now.x+1, now.y});
-            visited[now.x+1][now.y] = 1;
+        for(int i=0; i<4; i++){
+            nx = now.x + dx[i];
+            ny = now.y + dy[i];
+
+            if(!bound_check(nx, ny)) continue;
+            if(visited[nx][ny] != 0) continue;
+            
+            if(i == 0 && section[0][nx][ny] == 1){
+                q.push({nx, ny});
+                visited[nx][ny] = 1;
+            }
+            else if (i == 1 && section[1][now.x][now.y] == 1){
+                q.push({nx, ny});
+                visited[nx][ny] = 1;
+            }
+            else if (i == 2 && section[0][now.x][now.y] == 1){
+                q.push({nx, ny});
+                visited[nx][ny] = 1;
+            }
+            else if(i == 3 && section[1][nx][ny] == 1){
+                q.push({nx, ny});
+                visited[nx][ny] = 1;
+            }
         }
     }
     if(v.size() > 1){
@@ -76,8 +96,6 @@ void bfs(int x, int y){
 }
 
 void merge(){
-    memset(visited, 0, sizeof(visited));
-
     for(int i=0; i<N; i++){
         for(int j=0; j<N; j++){
             if(visited[i][j] == 0){
@@ -88,6 +106,9 @@ void merge(){
 }
 
 void simulation(){
+    memset(section, 0, sizeof(section));
+    memset(visited, 0, sizeof(visited));
+
     remove();
 
     merge();
@@ -96,13 +117,15 @@ void simulation(){
 int main() {
     fastio;
 
+    // freopen("input.txt", "r", stdin);
+
     cin >> N >> L >> R;
     for(int i=0; i<N; i++){
         for(int j=0; j<N; j++){
             cin >> arr[i][j];
         }
     }
-
+    // pprint();
     while(true){
         flag = true;
         simulation();
