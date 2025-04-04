@@ -1,11 +1,12 @@
 #include <iostream>
 #include <cmath>
+#include <unordered_set>
 using namespace std;
 #define fastio ios::sync_with_stdio(false); cin.tie(nullptr); cin.tie(nullptr);
 #define MAX_N 20
 
 int N;
-int favList[MAX_N+1][4];
+unordered_set<int> favList[MAX_N+1];
 int arr[MAX_N][MAX_N];
 int result = 0;
 int dx[4] = {-1, 0, 1, 0};
@@ -54,10 +55,8 @@ void simulation(int n){
                     nowEmptyCnt++;
                 }
                 else{
-                    for(int j=0; j<4; j++){
-                        if(arr[nx][ny] == favList[n][j]){
-                            nowCnt++;
-                        }
+                    if(favList[n].count(arr[nx][ny])){
+                        nowCnt++;
                     }
                 }
             }
@@ -93,10 +92,8 @@ void calc(){
 
                 if(!bound_check(nx, ny)) continue;
 
-                for(int j=0; j<4; j++){
-                    if(arr[nx][ny] == favList[arr[x][y]][j]){
-                        cnt++;
-                    }
+                if(favList[arr[x][y]].count(arr[nx][ny])){
+                    cnt++;
                 }
             }
             // cout << cnt << '\n';
@@ -113,23 +110,17 @@ int main() {
     fastio;
 
     cin >> N;
-    int n;
+    int n, f;
     for(int i=0; i<N*N; i++){
         cin >> n;
         for(int j=0; j<4; j++){
-            cin >> favList[n][j];
+            cin >> f;
+            favList[n].insert(f);
         }
         simulation(n);
-        // pprint();
     }
 
-    // for(int i=1; i<=N*N; i++){
-    //     for(int j=0; j<4; j++){
-    //         cout << favList[i][j] << ' ';
-    //     }
-    //     cout << '\n';
-    // }
-
+    // pprint();
     calc();
 
     cout << result << '\n';
