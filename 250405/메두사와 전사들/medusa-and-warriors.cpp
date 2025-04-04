@@ -210,7 +210,7 @@ void beamSimul(const Point &p, int dir){
     straightBeam(p, dir, 1);
     rightBeam(p, dir, 1);
     leftBeam(p, dir, 1);
-
+    // pprint();
     for(const Point &s : soldier){
         if(visited[s.x][s.y] == 1){
             if(dir == 0){
@@ -241,7 +241,7 @@ void beamSimul(const Point &p, int dir){
                 if(p.x == s.x){
                     straightBeam(s, dir, 0);
                 }
-                else if (p.y > s.y){
+                else if (p.x > s.x){
                     rightBeam(s, dir, 0);
                 }
                 else{
@@ -253,7 +253,7 @@ void beamSimul(const Point &p, int dir){
                 if(p.x == s.x){
                     straightBeam(s, dir, 0);
                 }
-                else if (p.y < s.y){
+                else if (p.x < s.x){
                     rightBeam(s, dir, 0);
                 }
                 else{
