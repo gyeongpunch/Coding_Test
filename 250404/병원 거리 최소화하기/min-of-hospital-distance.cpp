@@ -22,7 +22,7 @@ void simulation(){
     for(const Point &pp : totalPeo){
         int sub = 1e9;
         for(const int &i : path){
-            sub = min(sub, abs(pp.x - totalHos[path[i]].x) + abs(pp.y - totalHos[path[i]].y));
+            sub = min(sub, abs(pp.x - totalHos[i].x) + abs(pp.y - totalHos[i].y));
         }
         sum += sub;
     }
