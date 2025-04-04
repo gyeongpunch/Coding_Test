@@ -285,31 +285,44 @@ void soldierMove(const Point &p){
             continue;
         }
 
-        bool flag = true;
-        for(int i=0; i<2; i++){
-            for(int j=0; j<4; j++){
-                nx = s.x + dx[j];
-                ny = s.y + dy[j];
+        for(int j=0; j<4; j++){
+            nx = s.x + dx[j];
+            ny = s.y + dy[j];
 
-                if(!bound_check(nx, ny)) continue;
-                if(visited[nx][ny] == 1) continue;
-                if(abs(nx - p.x) + abs(ny - p.y) < abs(s.x - p.x) + abs(s.y - p.y)){
-                    s.x = nx;
-                    s.y = ny;
-                    nowInfo.moveSum++;
-                    break;
-                }
-            }
-            if(s.x == p.x && s.y == p.y){
-                nowInfo.dieCnt++;
-                flag = false;
+            if(!bound_check(nx, ny)) continue;
+            if(visited[nx][ny] == 1) continue;
+            if(abs(nx - p.x) + abs(ny - p.y) < abs(s.x - p.x) + abs(s.y - p.y)){
+                s.x = nx;
+                s.y = ny;
+                nowInfo.moveSum++;
                 break;
             }
+        }
 
+        if(s.x == p.x && s.y == p.y){
+            nowInfo.dieCnt++;
+            continue;
         }
-        if(flag){
-            newSol.push_back(s);
+
+        for(int j=2; j<6; j++){
+            nx = s.x + dx[j%4];
+            ny = s.y + dy[j%4];
+
+            if(!bound_check(nx, ny)) continue;
+            if(visited[nx][ny] == 1) continue;
+            if(abs(nx - p.x) + abs(ny - p.y) < abs(s.x - p.x) + abs(s.y - p.y)){
+                s.x = nx;
+                s.y = ny;
+                nowInfo.moveSum++;
+                break;
+            }
         }
+        if(s.x == p.x && s.y == p.y){
+            nowInfo.dieCnt++;
+            continue;
+        }
+
+        newSol.push_back(s);
     }
 
     soldier = newSol;
@@ -325,6 +338,8 @@ void simulation(){
         initInfo();
         maxRock = 0;
         maxDir = 0;
+
+        // cout << p.x << ' ' << p.y << '\n';
 
         for(int i=0; i<4; i++){
             beamSimul(p, i);
