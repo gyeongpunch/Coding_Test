@@ -86,6 +86,10 @@ bool cube_bound(CubePoint now){
             cp.x = minCube.x;
             cp.y = M - now.p.y - 1 + minCube.y;
         }
+        // cout << "!!!!!!!!!!!!!!\n";
+        // cout << cp.x << ' ' << cp.y << '\n';
+        // cout << cubeExit.x << ' ' << cubeExit.y << '\n';
+
     }
     else{
         return false;
@@ -232,11 +236,15 @@ int main() {
     for(int i=0; i<N; i++){
         for(int j=0; j<N; j++){
             cin >> arr[i][j];
-            if(arr[i][j] == 5){
+            if(arr[i][j] == 4){
                 Exit = {i, j};
             }
+        }
+    }
 
-            else if (arr[i][j] == 3){
+    for(int i=0; i<N; i++){
+        for(int j=0; j<N; j++){
+            if (arr[i][j] == 3){
                 minCube.x = min(minCube.x, i);
                 minCube.y = min(minCube.y, j);
                 maxCube.x = max(maxCube.x, i);
@@ -255,7 +263,6 @@ int main() {
                     }
                 }
             }
-
         }
     }
 
@@ -275,7 +282,7 @@ int main() {
         cin >> r >> c >> d >> v;
         totalTime.push_back({{r, c}, d, v});
     }
-
+    // cout << cubeExit.x << ' ' << cubeExit.y << '\n';
     time_bfs();
 
     if(!cube_exit_bfs()){
@@ -285,6 +292,13 @@ int main() {
         //             cout << cubeVisited[i][j][k] << ' ';
         //         }
         //         cout << '\n';
+        //     }
+        //     cout << '\n';
+        // }
+
+        // for(int i=0; i<N; i++){
+        //     for(int j=0; j<N; j++){
+        //         cout << visited[i][j] << ' ';
         //     }
         //     cout << '\n';
         // }
