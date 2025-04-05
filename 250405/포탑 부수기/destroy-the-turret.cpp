@@ -20,7 +20,7 @@ struct Info{
 
 int N, M, K;
 int arr[MAX_N][MAX_N];
-int timeMap[2][MAX_N][MAX_N];
+int timeMap[MAX_N][MAX_N];
 int visited[MAX_N][MAX_N];
 vector<Point> path;
 Info attack, harm;
@@ -47,51 +47,54 @@ void get_attack_harm(){
             if(arr[i][j] == 0) continue;
 
             if(attack.damage > arr[i][j]){
-                attack.damage = arr[i][j]; attack.p = {i, j}; attack.lastA = timeMap[0][i][j];
+                attack.damage = arr[i][j]; attack.p = {i, j}; attack.lastA = timeMap[i][j];
             }
             else if (attack.damage == arr[i][j]){
-                if(attack.lastA < timeMap[0][i][j]){
-                    attack.damage = arr[i][j]; attack.p = {i, j}; attack.lastA = timeMap[0][i][j];
+                if(attack.lastA < timeMap[i][j]){
+                    attack.damage = arr[i][j]; attack.p = {i, j}; attack.lastA = timeMap[i][j];
                 }
-                else if (attack.lastA == timeMap[0][i][j]){
+                else if (attack.lastA == timeMap[i][j]){
                     if(attack.p.x+attack.p.y < i + j){
-                        attack.damage = arr[i][j]; attack.p = {i, j}; attack.lastA = timeMap[0][i][j];
+                        attack.damage = arr[i][j]; attack.p = {i, j}; attack.lastA = timeMap[i][j];
                     }
                     else if (attack.p.x+attack.p.y == i + j){
                         if(attack.p.y < j){
-                            attack.damage = arr[i][j]; attack.p = {i, j}; attack.lastA = timeMap[0][i][j];
+                            attack.damage = arr[i][j]; attack.p = {i, j}; attack.lastA = timeMap[i][j];
                         }
                     }
                 }
             }
 
             if(harm.damage < arr[i][j]){
-                harm.damage = arr[i][j]; harm.p = {i, j}; harm.lastH = timeMap[1][i][j];
+                harm.damage = arr[i][j]; harm.p = {i, j}; harm.lastH = timeMap[i][j];
             }
             else if (harm.damage == arr[i][j]){
-                if(harm.lastH > timeMap[1][i][j]){
-                    harm.damage = arr[i][j]; harm.p = {i, j}; harm.lastH = timeMap[1][i][j];
+                if(harm.lastH > timeMap[i][j]){
+                    harm.damage = arr[i][j]; harm.p = {i, j}; harm.lastH = timeMap[i][j];
                 }
-                else if (harm.lastH == timeMap[1][i][j]){
+                else if (harm.lastH == timeMap[i][j]){
                     if(harm.p.x+harm.p.y > i + j){
-                        harm.damage = arr[i][j]; harm.p = {i, j}; harm.lastH = timeMap[1][i][j];
+                        harm.damage = arr[i][j]; harm.p = {i, j}; harm.lastH = timeMap[i][j];
                     }
                     else if (harm.p.x+harm.p.y == i + j){
                         if(harm.p.y > j){
-                            harm.damage = arr[i][j]; harm.p = {i, j}; harm.lastH = timeMap[1][i][j];
+                            harm.damage = arr[i][j]; harm.p = {i, j}; harm.lastH = timeMap[i][j];
                         }
                     }
                 }
             }
         }
     }
+    if(attack.p.x == harm.p.x && attack.p.y == harm.p.y) return;
+
+    arr[attack.p.x][attack.p.y] += N + M;
 }
 
 void pprint(){
     cout << "=================\n";
     for(int i=0; i<N; i++){
         for(int j=0; j<M; j++){
-            cout << visited[i][j] << ' ';
+            cout << arr[i][j] << ' ';
         }
         cout << '\n';
     }
@@ -145,10 +148,11 @@ bool harm2attack_bfs(){
             }
         }
     }
+    // pprint();
     return true;
 }
 
-void laser(){
+void laser(int t){
     memset(visited, 0, sizeof(visited));
     visited[attack.p.x][attack.p.y] = 1;
     for(const Point &p : path){
@@ -162,17 +166,21 @@ void laser(){
     }
 }
 
-void popo(){
+void popo(int t){
     memset(visited, 0, sizeof(visited));
     visited[attack.p.x][attack.p.y] = 1;
     visited[harm.p.x][harm.p.y] = 1;
     arr[harm.p.x][harm.p.y] = max(0, arr[harm.p.x][harm.p.y] - arr[attack.p.x][attack.p.y]);
-
+    
+    
     int nx, ny;
     for(int i=0; i<8; i++){
         nx = (harm.p.x + ddx[i] + N) % N;
         ny = (harm.p.y + ddy[i] + M) % M;
 
+        // cout << nx << ' ' << ny << '\n';
+
+        visited[nx][ny] = 1;
         arr[nx][ny] = max(0, arr[nx][ny] - arr[attack.p.x][attack.p.y] / 2);
     }
 }
@@ -202,19 +210,23 @@ int main() {
 
         // cout << attack.p.x << ' ' << attack.p.y << ' ' << harm.p.x << ' ' << harm.p.y << '\n';
 
-        arr[attack.p.x][attack.p.y] += N + M;
+        if(attack.p.x == harm.p.x && attack.p.y == harm.p.y){
+            break;
+        }
 
         if(harm2attack_bfs()){
 
             // for(Point p : path){
             //     cout << p.x << ' ' << p.y << '\n';
             // }
-            laser();
+            laser(i);
         }
         else{
-            popo();
+            popo(i);
         }
         fix();
+        timeMap[attack.p.x][attack.p.y] = i;
+        // pprint();
     }
 
     get_attack_harm();
