@@ -180,6 +180,8 @@ void popo(int t){
 
         // cout << nx << ' ' << ny << '\n';
 
+        if(attack.p.x == nx && attack.p.y == ny) continue;
+
         visited[nx][ny] = 1;
         arr[nx][ny] = max(0, arr[nx][ny] - arr[attack.p.x][attack.p.y] / 2);
     }
