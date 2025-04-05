@@ -150,7 +150,7 @@ int main() {
     rows = 3;
     cols = 3;
 
-    if(arr[r][c] == k){
+    if(arr[r-1][c-1] == k){
         cout << "0\n";
         return 0;
     }
