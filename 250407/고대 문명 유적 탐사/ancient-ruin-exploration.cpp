@@ -90,7 +90,7 @@ void get_max_rotate() {
         for (int y = 0; y <= 2; ++y) {
             for (int r = 1; r <= 4; ++r) {
                 rotate(x, y);
-                get_one_max(x, y, r);
+                if(r<4) get_one_max(x, y, r);
             }
             // memcpy(arr, backup, sizeof(arr));
         }
