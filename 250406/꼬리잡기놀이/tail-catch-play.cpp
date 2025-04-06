@@ -53,6 +53,10 @@ void group_bfs(int num, int groupIdx, int x, int y){
             if(visited[nx][ny] == 1) continue;
             if(arr[nx][ny] != 2 && arr[nx][ny] != 3) continue;
 
+            if(now.x == x && now.y == y){
+                if(arr[nx][ny] == 3) continue;
+            }
+
             q.push({nx, ny});
             visited[nx][ny] = 1;
             arr[nx][ny] = num;
@@ -241,13 +245,7 @@ int main() {
             top_gogo(t - N*3);
         }
 
-        // for(int i=0; i<M; i++){
-        //     for(Point a : team[i]){
-        //         cout << a.x << ' ' << a.y << '\n';
-        //     }
-        //     cout << "=======\n";
-        // }
-        // cout << result << '\n';
+        // pprint();
     }
 
     cout << result << '\n';
