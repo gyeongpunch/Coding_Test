@@ -23,6 +23,17 @@ bool bound_check(int x, int y){
     return 0<=x && x<N && 0<=y && y<N;
 }
 
+void pprint(){
+    cout << "\n\n";
+    for(int i=0; i<M; i++){
+        for(Point a : team[i]){
+            cout << a.x << ' ' << a.y << '\n';
+        }
+        cout << "=======\n";
+    }
+    cout << "\n\n";
+}
+
 void group_bfs(int num, int groupIdx, int x, int y){
     queue<Point> q;
     q.push({x, y});
@@ -107,6 +118,7 @@ void left_gogo(int x){
 }
 void bottom_gogo(int y){
     for(int x=N-1; x>-1; x--){
+        // cout << "x : " << x << " y : " << y << '\n';
         if(arr[x][y] >= 5){
             if(check(x, y, arr[x][y]-5)){
                 change_head_tail(arr[x][y]-5);
@@ -117,7 +129,7 @@ void bottom_gogo(int y){
 }
 void right_gogo(int x){
     for(int y=N-1; y>-1; y--){
-        if(arr[x][y] >= 5){
+        if(arr[N-x-1][y] >= 5){
             if(check(x, y, arr[x][y]-5)){
                 change_head_tail(arr[x][y]-5);
                 break;
@@ -213,19 +225,20 @@ int main() {
         //     cout << "=======\n";
         // }
 
-        t %= 4 * N;
+        t %= (N * 4);
 
         if(0<=t && t<N){
             left_gogo(t);
         }
         else if(N<=t && t<2*N){
-            bottom_gogo(N-t);
+            // pprint();
+            bottom_gogo(t - N);
         }
         else if(2*N<=t && t<3*N){
-            right_gogo(2*N-t);
+            right_gogo(t - N*2);
         }
         else if(3*N<=t && t<4*N){
-            top_gogo(3*N-t);
+            top_gogo(t - N*3);
         }
 
         // for(int i=0; i<M; i++){
@@ -234,6 +247,7 @@ int main() {
         //     }
         //     cout << "=======\n";
         // }
+        // cout << result << '\n';
     }
 
     cout << result << '\n';
