@@ -64,10 +64,11 @@ int main() {
     fastio;
 
     cin >> N >> K;
-    for(int i=0; i<2; i++){
-        for(int j=0; j<N; j++){
-            cin >> arr[i][j];
-        }
+    for(int i=0; i<N; i++){
+        cin >> arr[0][i];
+    }
+    for(int i=N-1; i>-1; i--){
+        cin >> arr[1][i];
     }
 
     while(true){
