@@ -83,16 +83,16 @@ void get_one_max(int x, int y, int rCnt) {
 }
 
 void get_max_rotate() {
-    int backup[N][N];
-    memcpy(backup, arr, sizeof(arr));
+    // int backup[N][N];
+    // memcpy(backup, arr, sizeof(arr));
 
     for (int x = 0; x <= 2; ++x) {
         for (int y = 0; y <= 2; ++y) {
-            for (int r = 1; r <= 3; ++r) {
+            for (int r = 1; r <= 4; ++r) {
                 rotate(x, y);
                 get_one_max(x, y, r);
             }
-            memcpy(arr, backup, sizeof(arr));
+            // memcpy(arr, backup, sizeof(arr));
         }
     }
 }
@@ -178,3 +178,4 @@ int main() {
 
     return 0;
 }
+
