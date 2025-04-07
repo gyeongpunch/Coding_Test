@@ -1,5 +1,5 @@
 #include <iostream>
-
+#include <iomanip>
 using namespace std;
 #define fastio ios::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 #define MAX_L 40
@@ -17,8 +17,6 @@ void nprint();
 int L, N, Q;
 int arr[MAX_L][MAX_L];
 int arrNight[MAX_L][MAX_L];
-int arrNightTmp[MAX_L][MAX_L];
-int visited[MAX_L][MAX_L];
 Night night[MAX_N+1];
 int damage[MAX_N+1];
 int dx[4] = {-1, 0, 1, 0};
@@ -36,20 +34,31 @@ void push_night(int idx, int dir, int is_hurt){
         for(int j=now.y; j<now.y+now.w; j++){
             nx = i + dx[dir];
             ny = j + dy[dir];
+ 
+            if(!bound_check(nx, ny)) return;
+            if(arr[nx][ny] == 2) return;
+        }
+    }
 
+
+    for(int i=now.x; i<now.x+now.h; i++){
+        for(int j=now.y; j<now.y+now.w; j++){
+            nx = i + dx[dir];
+            ny = j + dy[dir];
+ 
             if(!bound_check(nx, ny)) return;
             if(arr[nx][ny] == 2) return;
 
             if(arrNight[nx][ny] != 0 && idx != arrNight[nx][ny]){
                 push_night(arrNight[nx][ny], dir, 1);
                 
-
-                if(arrNight[nx][ny] != 0 && arrNight[i][j] != arrNight[nx][ny]){
+                if(arrNight[nx][ny] != 0){
                     return;
                 }
             }
         }
     }
+
     // nprint();
     // cout << "idx : " << idx << ' ' << is_hurt << '\n';
     for(int i=now.x; i<now.x+now.h; i++){
@@ -124,7 +133,7 @@ int main(void){
     int idx, d;
     for(int i=0; i<Q; i++){
         cin >> idx >> d;
-
+        if(damage[idx] >= night[idx].k) continue;
         simulation(idx, d);
         // nprint();
     }
@@ -138,9 +147,16 @@ void nprint(){
     cout << "===============\n";
     for(int i=0; i<L; i++){
         for(int j=0; j<L; j++){
-            cout << arrNight[i][j] << ' ';
+            cout << setfill(' ') << setw(2) << arrNight[i][j] << ' ';
         }
         cout << '\n';
     }
+
+    cout << '\n';
+    for(int i=1; i<=N; i++){
+        cout << damage[i] << ' ';
+    }
+    cout << '\n';
+
     cout << "===============\n";
 }
