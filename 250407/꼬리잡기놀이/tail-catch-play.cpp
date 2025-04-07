@@ -201,15 +201,15 @@ void bfs(int x, int y, int groupNum) {
 			if (visited[nx][ny] == 1) continue;
 			if (arr[nx][ny] == 0) continue;
 
-			if (arr[now.x][now.y] == 1 && arr[nx][ny] == 3) continue;
-
+			if (arr[now.x][now.y] == 1 && arr[nx][ny] != 2) continue;
+			
 			if (arr[nx][ny] != 4) {
 				team[groupNum].push_back({ nx, ny });
 			}
 			q.push({ nx, ny });
 			visited[nx][ny] = 1;
 			arrMap[nx][ny] = groupNum;
-			break;
+			
 		}
 	}
 }
