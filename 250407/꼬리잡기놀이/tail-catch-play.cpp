@@ -59,7 +59,7 @@ void reverse(int groupNum) {
 }
 
 void left_gogo(int x) {
-	for (int y = 0; y < N - 1; y++) {
+	for (int y = 0; y < N; y++) {
 		if (1 <= arr[x][y] && arr[x][y] <= 3) {
 			plus_score(x, y, arrMap[x][y]);
 			reverse(arrMap[x][y]);
@@ -101,7 +101,8 @@ void top_gogo(int y) {
 void simulation() {
 	for (int k = 0; k < K; k++) {
 
-		total_move();
+ 		total_move();
+
 
 		int now_k = k % (N * 4);
 
@@ -209,6 +210,7 @@ void bfs(int x, int y, int groupNum) {
 			q.push({ nx, ny });
 			visited[nx][ny] = 1;
 			arrMap[nx][ny] = groupNum;
+			break;
 			
 		}
 	}
