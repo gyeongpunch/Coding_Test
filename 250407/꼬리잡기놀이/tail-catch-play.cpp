@@ -209,6 +209,7 @@ void bfs(int x, int y, int groupNum) {
 			q.push({ nx, ny });
 			visited[nx][ny] = 1;
 			arrMap[nx][ny] = groupNum;
+			break;
 		}
 	}
 }
