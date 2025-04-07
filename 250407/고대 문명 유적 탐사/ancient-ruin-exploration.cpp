@@ -1,181 +1,221 @@
 #include <iostream>
-#include <vector>
-#include <queue>
 #include <algorithm>
+#include <queue>
 #include <cstring>
+
 using namespace std;
-
+#define fastio ios::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 const int N = 5;
-const int M = 300;
-
-int arr[N][N];
-int arrTmp[N][N];
-int visited[N][N];
-int dx[4] = {-1, 0, 1, 0};
-int dy[4] = {0, 1, 0, -1};
-
-int newNum[M];
-int newNumIdx = 0;
-
-struct Point {
-    int x, y;
-};
+const int NN = 3;
+const int MAX_M = 300;
 
 struct Info {
-    int value = -1;
-    int rCnt, cx, cy;
+	int value;
+	int rCnt;
+	int cx, cy;
 };
 
-Info maxInfo;
-int result;
+struct Point {
+	int x, y;
+};
+
+void simul_init();
+void input();
+void rotate(int x, int y);
+bool bound_check(int x, int y);
+int K, M;
+int arr[N][N];
+int arrTmp[N][N];
+int new_list[MAX_M];
+int newIdx = 0;
+int visited[N][N];
 bool resultFlag;
-vector<Point> bombTotal;
+int result;
+Info maxInfo;
+vector<Point> maxInfoVector;
+vector<Point> oneVector;
+int dx[4] = { -1, 0, 1, 0 };
+int dy[4] = { 0, 1, 0, -1 };
 
-bool in_range(int x, int y) {
-    return x >= 0 && x < N && y >= 0 && y < N;
-}
-
-void rotate(int x, int y) {
-    for (int i = 0; i < 3; ++i)
-        for (int j = 0; j < 3; ++j)
-            arrTmp[x + j][y + 3 - i - 1] = arr[x + i][y + j];
-
-    for (int i = 0; i < 3; ++i)
-        for (int j = 0; j < 3; ++j)
-            arr[x + i][y + j] = arrTmp[x + i][y + j];
-}
 
 int bfs(int x, int y) {
-    queue<Point> q;
-    q.push({x, y});
-    visited[x][y] = 1;
-    int cnt = 1;
+	queue<Point> q;
+	q.push({ x, y });
+	visited[x][y] = 1;
+	int cnt = 0;
+	vector<Point> tmp;
+	int nx, ny;
+	while (!q.empty()) {
+		Point now = q.front(); q.pop();
 
-    while (!q.empty()) {
-        Point cur = q.front(); q.pop();
-        for (int dir = 0; dir < 4; ++dir) {
-            int nx = cur.x + dx[dir];
-            int ny = cur.y + dy[dir];
-            if (!in_range(nx, ny) || visited[nx][ny]) continue;
-            if (arr[nx][ny] != arr[x][y]) continue;
-            visited[nx][ny] = 1;
-            q.push({nx, ny});
-            ++cnt;
-        }
-    }
-    return cnt >= 3 ? cnt : 0;
+		tmp.push_back(now);
+		cnt++;
+
+		for (int i = 0; i < 4; i++)
+		{
+			nx = now.x + dx[i];
+			ny = now.y + dy[i];
+
+			if (!bound_check(nx, ny)) continue;
+			if (arr[nx][ny] != arr[x][y]) continue;
+			if (visited[nx][ny] == 1) continue;
+
+			q.push({ nx, ny });
+			visited[nx][ny] = 1;
+		}
+	}
+
+	if (cnt >= 3) {
+		for (const Point &p : tmp) {
+			oneVector.push_back(p);
+		}
+		return cnt;
+	}
+	return 0;
 }
 
-void get_one_max(int x, int y, int rCnt) {
-    memset(visited, 0, sizeof(visited));
-    int sum = 0;
-    for (int i = 0; i < N; ++i)
-        for (int j = 0; j < N; ++j)
-            if (!visited[i][j]) sum += bfs(i, j);
+void update_one_value(int x, int y, int r) {
+	memset(visited, 0, sizeof(visited));
 
-    if (maxInfo.value < sum) {
-        maxInfo = {sum, rCnt, x + 1, y + 1};
-    } else if (maxInfo.value == sum) {
-        if (maxInfo.rCnt > rCnt || (maxInfo.rCnt == rCnt && (maxInfo.cy > y + 1 || (maxInfo.cy == y + 1 && maxInfo.cx > x + 1)))) {
-            maxInfo = {sum, rCnt, x + 1, y + 1};
-        }
-    }
+	int sum = 0;
+	oneVector.clear();
+	for (int i = 0; i < N; i++)
+	{
+		for (int j = 0; j < N; j++)
+		{	
+			if (visited[i][j] == 0) {
+				sum += bfs(i, j);
+			}
+		}
+	}
+
+	if (maxInfo.value < sum ||
+		(maxInfo.value == sum && (maxInfo.rCnt > r ||
+		(maxInfo.rCnt == r && (maxInfo.cy > y + 1 ||
+		(maxInfo.cy == y + 1 && maxInfo.cx > x + 1)))))) {
+		maxInfo.value = sum;
+		maxInfo.rCnt = r;
+		maxInfo.cx = x + 1;
+		maxInfo.cy = y + 1;
+		maxInfoVector = oneVector;
+	}
 }
 
 void get_max_rotate() {
-    // int backup[N][N];
-    // memcpy(backup, arr, sizeof(arr));
+	for (int x = 0; x <= 2; x++) {
+		for (int y = 0; y <= 2; y++) {
+			for (int r = 0; r < 4; r++) {
+				rotate(x, y);
 
-    for (int x = 0; x <= 2; ++x) {
-        for (int y = 0; y <= 2; ++y) {
-            for (int r = 1; r <= 4; ++r) {
-                rotate(x, y);
-                if(r<4) get_one_max(x, y, r);
-            }
-            // memcpy(arr, backup, sizeof(arr));
-        }
-    }
+				if(r<3) update_one_value(x, y, r);
+			}
+		}
+	}
 }
 
-int bfs2(int x, int y) {
-    queue<Point> q;
-    vector<Point> trace;
-    q.push({x, y});
-    visited[x][y] = 1;
-    trace.push_back({x, y});
-
-    while (!q.empty()) {
-        Point cur = q.front(); q.pop();
-        for (int dir = 0; dir < 4; ++dir) {
-            int nx = cur.x + dx[dir];
-            int ny = cur.y + dy[dir];
-            if (!in_range(nx, ny) || visited[nx][ny]) continue;
-            if (arr[nx][ny] != arr[x][y]) continue;
-            visited[nx][ny] = 1;
-            q.push({nx, ny});
-            trace.push_back({nx, ny});
-        }
-    }
-
-    if (trace.size() >= 3) {
-        for (auto &p : trace) arr[p.x][p.y] = 0;
-        return trace.size();
-    }
-    return 0;
+void bomb() {
+	for (const Point &p : maxInfoVector) {
+		arr[p.x][p.y] = 0;
+		result++;
+	}
 }
 
-bool bomb() {
-    memset(visited, 0, sizeof(visited));
-    int cnt = 0;
-    for (int i = 0; i < N; ++i)
-        for (int j = 0; j < N; ++j)
-            if (!visited[i][j]) cnt += bfs2(i, j);
-    result += cnt;
-    return cnt > 0;
-}
-
-void fill_new() {
-    for (int j = 0; j < N; ++j)
-        for (int i = N - 1; i >= 0; --i)
-            if (arr[i][j] == 0) arr[i][j] = newNum[newNumIdx++];
+void new_fill() {
+	for (int y = 0; y < N; y++) {
+		for (int x = N - 1; x > -1; x--) {
+			if (arr[x][y] == 0) {
+				arr[x][y] = new_list[newIdx++];
+			}
+		}
+	}
 }
 
 void simulation() {
-    maxInfo = {-1, 0, 0, 0};
-    get_max_rotate();
-    if (maxInfo.value == 0) {
-        resultFlag = false;
-        return;
-    }
+	maxInfo = { -1, 4, -1, -1 };
+	maxInfoVector.clear();
 
-    for (int i = 0; i < maxInfo.rCnt; ++i)
-        rotate(maxInfo.cx - 1, maxInfo.cy - 1);
+	get_max_rotate();
 
-    bomb();
-    fill_new();
-    while (bomb()) fill_new();
+	if (maxInfo.value == 0) {
+		resultFlag = false;
+		return;
+	}
+	for (int i = 0; i <= maxInfo.rCnt; i++) {
+		rotate(maxInfo.cx - 1, maxInfo.cy - 1);
+	}
+
+	bomb();
+	new_fill();
+	
+	while (true) {
+		maxInfo = { -1, 4, -1, -1 };
+		maxInfoVector.clear();
+
+		update_one_value(0, 0, 0);
+
+		if (maxInfo.value == 0) {
+			return;
+		}
+		bomb();
+		new_fill();
+	}
 }
 
 int main() {
-    ios::sync_with_stdio(false); cin.tie(nullptr);
+	fastio;
 
-    int K, M;
-    cin >> K >> M;
-    for (int i = 0; i < N; ++i)
-        for (int j = 0; j < N; ++j)
-            cin >> arr[i][j];
+	input();
 
-    for (int i = 0; i < M; ++i)
-        cin >> newNum[i];
+	for (int i = 0; i < K; i++)
+	{
+		simul_init();
 
-    for (int k = 0; k < K; ++k) {
-        result = 0;
-        resultFlag = true;
-        simulation();
-        if (!resultFlag) break;
-        cout << result << " ";
-    }
+		simulation();
 
-    return 0;
+		if (resultFlag) {
+			cout << result << ' ';
+		}
+		else {
+			break;
+		}
+	}
+
+
+	return 0;
 }
 
+void rotate(int x, int y) {
+	for (int i = 0; i < NN; i++) {
+		for (int j = 0; j < NN; j++) {
+			arrTmp[x + j][y + NN - i - 1] = arr[x + i][y + j];
+		}
+	}
+	for (int i = 0; i < NN; i++) {
+		for (int j = 0; j < NN; j++) {
+			arr[x + i][y + j] = arrTmp[x + i][y + j];
+		}
+	}
+}
+
+void input() {
+	cin >> K >> M;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			cin >> arr[i][j];
+			arrTmp[i][j] = arr[i][j];
+		}
+	}
+	for (int i = 0; i < M; i++)
+	{
+		cin >> new_list[i];
+	}
+}
+
+void simul_init() {
+	resultFlag = true;
+	result = 0;
+}
+
+bool bound_check(int x, int y) {
+	return 0 <= x && x < N && 0 <= y && y < N;
+}
