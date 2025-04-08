@@ -37,7 +37,7 @@ void remove_death_monster(int nowTime) {
 		for (int j = 0; j < N; j++) {
 			if (deathTimer[i][j] == 0) continue;
 
-			if (nowTime - deathTimer[i][j] > 2) {
+			if (nowTime - deathTimer[i][j] >= 2) {
 				deathTimer[i][j] = 0;
 			}
 		}
@@ -99,37 +99,42 @@ void move_packman(int nowTime) {
 
 	int nx, ny;
 	for (int i = 0; i < total_moveList.size(); i++) {
+		memset(visited, 0, sizeof(visited));
 		int x = PackMan.x;
 		int y = PackMan.y;
 		int nowCnt = 0;
-		memset(visited, 0, sizeof(visited));
-
+		visited[x][y] = 1;
+		bool flag = true;
 		for (const int &dir : total_moveList[i]) {
 			nx = x + ddx[dir];
 			ny = y + ddy[dir];
 
-			if (!bound_check(nx, ny)) continue;
-			if (visited[nx][ny] != 0) continue;
+			if (!bound_check(nx, ny)) {
+				flag = false;
+				break;
+			}
+			if (visited[nx][ny] != 0) {
+				flag = false;
+				break;
+			}
 			x = nx;
 			y = ny;
 			visited[x][y] = 1;
 			if (!arrMonsterTmp[x][y].empty()) nowCnt += arrMonsterTmp[x][y].size();
 		}
 
-		if (nowCnt > maxCnt) {
+		if (flag && nowCnt > maxCnt) {
 			maxCnt = nowCnt;
 			maxIdx = i;
 		}
 	}
 
+	memset(visited, 0, sizeof(visited));
 	for (const int &dir : total_moveList[maxIdx]) {
-		nx = PackMan.x + ddx[dir];
-		ny = PackMan.y + ddy[dir];
+		PackMan.x += ddx[dir];
+		PackMan.y += ddy[dir];
 
-		if (!bound_check(nx, ny)) continue;
-
-		PackMan.x = nx;
-		PackMan.y = ny;
+		visited[PackMan.x][PackMan.y] = 1;
 
 		if (arrMonsterTmp[PackMan.x][PackMan.y].empty()) continue;
 
