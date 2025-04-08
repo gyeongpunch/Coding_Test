@@ -1,201 +1,149 @@
 #include <iostream>
-#include <iomanip>
 #include <vector>
 #include <cstring>
 using namespace std;
 #define fastio ios::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 #define MAX_L 40
 #define MAX_N 30
-
-struct Night{
-    int x, y, h, w, k;
+struct Knight {
+	int x, y, h, w, k;
 };
-
-struct Point{
-    int x, y;
-};
-
-struct Info{
-    int idx, is_hurt;
-};
-
-void nprint();
 
 int L, N, Q;
 int arr[MAX_L][MAX_L];
-int arrNight[MAX_L][MAX_L];
-Night night[MAX_N+1];
-int damage[MAX_N+1];
-int dx[4] = {-1, 0, 1, 0};
-int dy[4] = {0, 1, 0, -1};
-vector<Info> tmp;
-int visited[MAX_N + 1];
-bool flag = true;
-bool bound_check(int x, int y){
-    return 0<=x && x<L && 0<=y && y<L;
+int arrKnight[MAX_L][MAX_L];
+Knight knight[MAX_N + 1];
+int damage[MAX_N];
+int dx[4] = { -1, 0, 1, 0 };
+int dy[4] = { 0, 1, 0, -1 };
+int result = 0;
+int is_moveList[MAX_N + 1];
+int is_availMove[MAX_N + 1];
+int is_hurtList[MAX_N + 1];
+
+bool bound_check(int x, int y) {
+	return 0 <= x && x < L && 0 <= y && y < L;
 }
 
-bool is_okay(int idx, int dir){
-    const Night &now = night[idx];
-    int nx, ny;
-
-    for(int i=now.x; i<now.x+now.h; i++){
-        for(int j=now.y; j<now.y+now.w; j++){
-            nx = i + dx[dir];
-            ny = j + dy[dir];
- 
-            if(!bound_check(nx, ny)) return false;
-            if(arr[nx][ny] == 2) return false;
-        }
-    }
-    return true;
+void calc_result() {
+	for (int i = 1; i <= N; i++) {
+		if (damage[i] >= knight[i].k) continue;
+		result += damage[i];
+	}
 }
 
-void get_tmp(int idx, int dir){
-    Night &now = night[idx];
+void push_knight(int idx, int dir) {
+	Knight now = knight[idx];
 
-    int nx, ny;
-    for(int i=now.x; i<now.x+now.h; i++){
-        for(int j=now.y; j<now.y+now.w; j++){
-            nx = i + dx[dir];
-            ny = j + dy[dir];
-            
-            if(!bound_check(nx, ny)){
-                flag = false;
-                return;
-            }
-            if(arr[nx][ny] == 2){
-                flag = false;
-                return;
-            }
+	int nx = now.x + dx[dir];
+	int ny = now.y + dy[dir];
 
-            if(arrNight[nx][ny] != 0 && idx != arrNight[nx][ny]){
-                if(visited[arrNight[nx][ny]] == 0){
-                    visited[arrNight[nx][ny]] = 1;
-                    tmp.push_back({arrNight[nx][ny], 1});
-                    get_tmp(arrNight[nx][ny], dir);
-                }
-            }
-        }
-    }
+	for (int x = nx; x < nx + now.h; x++) {
+		for (int y = ny; y < ny + now.w; y++) {
+			
+			if (!bound_check(x, y)) return;
+			if (arr[x][y] == 2) return;
+
+			if (arrKnight[x][y] != 0 && idx != arrKnight[x][y]) {
+				is_moveList[arrKnight[x][y]] = 1;
+				is_hurtList[arrKnight[x][y]] = 1;
+				push_knight(arrKnight[x][y], dir);
+			}
+
+		}
+	}
+	is_availMove[idx] = 1;
 }
 
-void push_night(int idx, int dir){
-    visited[idx] = 1;
-    tmp.push_back({idx, 0});
-    flag = true;
-    get_tmp(idx, dir);
+void simulation(int idx, int dir) {
+	is_moveList[idx] = 1;
+	push_knight(idx, dir);
 
-    if(!flag){
-        return;
-    }
+	for (int i = 1; i <= N; i++) {
+		if (is_moveList[i] == 1 && is_availMove[i] == 0) {
+			return;
+		}
+	}
 
-    // for(Info info : tmp){
-    //     cout << info.idx << ' ' << info.is_hurt << '\n';
-    // }
-    
-    for(int i=tmp.size()-1; i>-1; i--){
-        Night &now = night[tmp[i].idx];
+	for (int i = 1; i <= N; i++) {
+		if (is_moveList[i] == 0) continue;
 
-        for(int x=now.x; x<now.x+now.h; x++){
-            for(int y=now.y; y<now.y+now.w; y++){
-                arrNight[x][y] = 0;
-            }
-        }
+		Knight now = knight[i];
+		
+		for (int x = now.x; x < now.x + now.h; x++) {
+			for (int y = now.y; y < now.y + now.w; y++) {
+				arrKnight[x][y] = 0;
+			}
+		}
+	}
 
-        now.x += dx[dir];
-        now.y += dy[dir];
+	for (int i = 1; i <= N; i++) {
+		if (is_moveList[i] == 0) continue;
 
+		Knight &now = knight[i];
 
-        for(int x=now.x; x<now.x+now.h; x++){
-            for(int y=now.y; y<now.y+now.w; y++){
-                arrNight[x][y] = tmp[i].idx;
-    
-                if(arr[x][y] == 1 && tmp[i].idx != idx){
-                    damage[tmp[i].idx]++;
-                }
-            }
-        }
-    
-        if(damage[tmp[i].idx] >= now.k){
-            for(int x=now.x; x<now.x+now.h; x++){
-                for(int y=now.y; y<now.y+now.w; y++){
-                    arrNight[x][y] = 0;
-                }
-            }
-        }
+		now.x += dx[dir];
+		now.y += dy[dir];
 
-    }
+		for (int x = now.x; x < now.x + now.h; x++) {
+			for (int y = now.y; y < now.y + now.w; y++) {
+				arrKnight[x][y] = i;
+
+				if (is_hurtList[i] == 1 && arr[x][y] == 1) {
+					damage[i]++;
+				}
+			}
+		}
+
+		if (damage[i] >= now.k) {
+			for (int x = now.x; x < now.x + now.h; x++) {
+				for (int y = now.y; y < now.y + now.w; y++) {
+					arrKnight[x][y] = 0;
+				}
+			}
+		}
+	}
 }
 
-void simulation(int idx, int dir){
-    memset(visited, 0, sizeof(visited));
-    tmp.clear();
-    push_night(idx, dir);
-}
+int main(void) {
+	fastio;
 
-int get_result(){
-    int sum = 0;
-    for(int i=1; i<=N; i++){
-        if(night[i].k > damage[i]){
-            sum += damage[i];
-        }
-    }
-    return sum;
-}
+	cin >> L >> N >> Q;
+	for (int i = 0; i < L; i++) {
+		for (int j = 0; j < L; j++) {
+			cin >> arr[i][j];
+		}
+	}
 
-int main(void){
-    fastio;
+	int r, c, h, w, k;
+	for (int i = 1; i <= N; i++) {
+		cin >> r >> c >> h >> w >> k;
 
-    // freopen("input.txt", "r", stdin);
+		knight[i] = { r-1, c-1, h, w, k };
 
-    cin >> L >> N >> Q;
-    for(int i=0; i<L; i++){
-        for(int j=0; j<L; j++){
-            cin >> arr[i][j];
-        }
-    }
+		for (int x = r-1; x < r-1 + h; x++) {
+			for (int y = c-1; y < c-1 + w; y++) {
+				arrKnight[x][y] = i;
+			}
+		}
+	}
+	int idx, d;
+	for (int i = 0; i < Q; i++) {
+		cin >> idx >> d;
 
-    int x, y, h, w, k;
-    for(int i=1; i<=N; i++){
-        cin >> x >> y >> h >> w >> k;
-        x--;
-        y--;
-        night[i] = {x, y, h, w, k};
-        for(int j=x; j<x+h; j++){
-            for(int k=y; k<y+w; k++){
-                arrNight[j][k] = i;
-            }
-        }
-    }
-    // nprint();
-    int idx, d;
-    for(int i=0; i<Q; i++){
-        cin >> idx >> d;
-        if(damage[idx] >= night[idx].k) continue;
-        simulation(idx, d);
-        // nprint();
-    }
+		if (damage[idx] >= knight[idx].k) continue;
 
-    cout << get_result() << '\n';
+		memset(is_moveList, 0, sizeof(is_moveList));
+		memset(is_availMove, 0, sizeof(is_availMove));
+		memset(is_hurtList, 0, sizeof(is_hurtList));
 
-    return 0;
-}
+		simulation(idx, d);
+	}
+	
+	calc_result();
 
-void nprint(){
-    cout << "===============\n";
-    for(int i=0; i<L; i++){
-        for(int j=0; j<L; j++){
-            cout << setfill(' ') << setw(2) << arrNight[i][j] << ' ';
-        }
-        cout << '\n';
-    }
+	cout << result << '\n';
 
-    cout << '\n';
-    for(int i=1; i<=N; i++){
-        cout << damage[i] << ' ';
-    }
-    cout << '\n';
 
-    cout << "===============\n";
+	return 0;
 }
