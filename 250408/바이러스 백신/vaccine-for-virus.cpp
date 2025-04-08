@@ -55,7 +55,7 @@ void calc() {
 
 			if (arr[nx][ny] == 0) {
 				rest--;
-				removeTime = max(removeTime, visited[nx][ny]);
+				removeTime = visited[nx][ny];
 			}
 		}
 	}
