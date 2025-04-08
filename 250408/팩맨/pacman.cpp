@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <cstring>
 using namespace std;
 #define fastio ios::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 #define N 4
