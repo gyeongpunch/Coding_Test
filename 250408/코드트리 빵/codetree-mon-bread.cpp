@@ -51,7 +51,7 @@ void move(int idx){
 
             if(!bound_check(nx, ny)) continue;
             if(visited[nx][ny] != 0) continue;
-            if(arr[nx][ny] == 2 && (now.x != curr_loc[idx].x && now.y != curr_loc[idx].y)) continue;
+            if(arr[nx][ny] == 2 && (nx != curr_loc[idx].x || ny != curr_loc[idx].y)) continue;
 
             q.push({nx, ny});
             visited[nx][ny] = visited[now.x][now.y] + 1;
@@ -81,14 +81,14 @@ void move(int idx){
 }
 
 void total_move(int now_time){
-    for(int i=1; i<min(now_time, M+1); i++){
+    for(int i=1; i<=min(now_time-1, M); i++){
         if(arr[target_store[i].x][target_store[i].y] == 2) continue;
         move(i);
     }
 }
 
 void block_store(int now_time){
-    for(int i=1; i<min(now_time, M+1); i++){
+    for(int i=1; i<=M; i++){
         if(arr[target_store[i].x][target_store[i].y] == 2) continue;
 
         if(target_store[i].x == curr_loc[i].x && target_store[i].y == curr_loc[i].y){
@@ -107,12 +107,6 @@ void go_basecamp(int idx){
     while(!q.empty()){
         Point now = q.front(); q.pop();
 
-        if(arr[now.x][now.y] == 1){
-            curr_loc[idx] = now;
-            arr[now.x][now.y] = 2;
-            return;
-        }
-
         for(int i=0; i<4; i++){
             nx = now.x + dx[i];
             ny = now.y + dy[i];
@@ -125,6 +119,21 @@ void go_basecamp(int idx){
             visited[nx][ny] = visited[now.x][now.y] + 1;
         }
     }
+
+    int min_dist = N * N + 1;
+    Point min_basecamp;
+
+    for(const Point &b : basecamp){
+        if(arr[b.x][b.y] == 2) continue;
+        
+        if(visited[b.x][b.y] < min_dist){
+            min_dist = visited[b.x][b.y];
+            min_basecamp = b;
+        }
+    }
+
+    curr_loc[idx] = min_basecamp;
+    arr[min_basecamp.x][min_basecamp.y] = 2;
 }
 
 void simulation(int now_time){
@@ -135,8 +144,6 @@ void simulation(int now_time){
     if(now_time <= M){
         go_basecamp(now_time);
     }
-
-
 }
 
 bool custom_compare(Point a, Point b){
@@ -174,7 +181,7 @@ int main(void){
 
         // if(result == 10) break;
     }
-
+    // pprint();
     cout << result << '\n';
 
     return 0;
@@ -190,7 +197,7 @@ void pprint(){
     }
     cout << "-----------------------\n";
     for(int i=1; i<=M; i++){
-        cout << curr_loc[i].x << ' ' << curr_loc[i].y << '\n';
+        cout << curr_loc[i].x + 1<< ' ' << curr_loc[i].y + 1 << '\n';
     }
     cout << "==================\n";
 }
