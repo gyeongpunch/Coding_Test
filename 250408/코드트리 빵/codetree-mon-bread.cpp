@@ -98,7 +98,7 @@ void total_move(int now_time){
 }
 
 void block_store(int now_time){
-    for(int i=1; i<=M; i++){
+    for(int i=1; i<=min(now_time-1, M); i++){
         if(arr[target_store[i].x][target_store[i].y] == 2) continue;
 
         if(target_store[i].x == curr_loc[i].x && target_store[i].y == curr_loc[i].y){
@@ -149,8 +149,10 @@ void go_basecamp(int idx){
 void simulation(int now_time){
     total_move(now_time);
 
+    // pprint();
     block_store(now_time);
 
+    // pprint();
     if(now_time <= M){
         go_basecamp(now_time);
     }
