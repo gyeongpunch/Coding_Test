@@ -10,6 +10,7 @@ struct Atom{
 void input();
 void calc_result();
 void move();
+void pprint();
 int N, M, K;
 int result = 0;
 vector<Atom> arr[MAX_N][MAX_N];
@@ -38,6 +39,11 @@ void seperate_atom(){
                 
                 new_mass /= 5;
                 new_speed /= arrTmp[x][y].size();
+                
+                if(new_mass == 0){
+                    arrTmp[x][y].clear();
+                    continue;
+                }
 
                 if(is_all_even * is_all_odd == 0){
                     for(int d=0; d<8; d+=2){
@@ -70,6 +76,8 @@ int main(void){
 
     for(int i=0; i<K; i++){
         simulation();
+
+        // pprint();
     }
 
     calc_result();
@@ -120,4 +128,16 @@ void calc_result(){
             }
         }
     }
+}
+
+
+void pprint(){
+    cout << "==================\n";
+    for(int i=0; i<N; i++){
+        for(int j=0; j<N; j++){
+            cout << arr[i][j].size() << ' ';
+        }
+        cout << '\n';
+    }
+    cout << "==================\n";
 }
