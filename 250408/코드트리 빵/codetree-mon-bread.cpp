@@ -51,10 +51,20 @@ void move(int idx){
 
             if(!bound_check(nx, ny)) continue;
             if(visited[nx][ny] != 0) continue;
-            if(arr[nx][ny] == 2 && (nx != curr_loc[idx].x || ny != curr_loc[idx].y)) continue;
 
-            q.push({nx, ny});
-            visited[nx][ny] = visited[now.x][now.y] + 1;
+            if(arr[nx][ny] == 2){
+                if(nx == curr_loc[idx].x && ny == curr_loc[idx].y){
+                    q.push({nx, ny});
+                    visited[nx][ny] = visited[now.x][now.y] + 1;
+                }
+                else{
+                    continue;
+                }
+            }
+            else{
+                q.push({nx, ny});
+                visited[nx][ny] = visited[now.x][now.y] + 1;
+            }            
         }
     }
 
@@ -125,7 +135,7 @@ void go_basecamp(int idx){
 
     for(const Point &b : basecamp){
         if(arr[b.x][b.y] == 2) continue;
-        
+        if(visited[b.x][b.y] == 0) continue;
         if(visited[b.x][b.y] < min_dist){
             min_dist = visited[b.x][b.y];
             min_basecamp = b;
