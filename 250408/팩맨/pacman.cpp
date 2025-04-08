@@ -99,12 +99,11 @@ void move_packman(int nowTime) {
 
 	int nx, ny;
 	for (int i = 0; i < total_moveList.size(); i++) {
-		memset(visited, 0, sizeof(visited));
 		int x = PackMan.x;
 		int y = PackMan.y;
 		int nowCnt = 0;
-		visited[x][y] = 1;
 		bool flag = true;
+		memset(visited, 0, sizeof(visited));
 		for (const int &dir : total_moveList[i]) {
 			nx = x + ddx[dir];
 			ny = y + ddy[dir];
@@ -113,14 +112,11 @@ void move_packman(int nowTime) {
 				flag = false;
 				break;
 			}
-			if (visited[nx][ny] != 0) {
-				flag = false;
-				break;
-			}
 			x = nx;
 			y = ny;
+			if (visited[x][y] == 0 && !arrMonsterTmp[x][y].empty()) nowCnt += arrMonsterTmp[x][y].size();
 			visited[x][y] = 1;
-			if (!arrMonsterTmp[x][y].empty()) nowCnt += arrMonsterTmp[x][y].size();
+			
 		}
 
 		if (flag && nowCnt > maxCnt) {
