@@ -50,7 +50,6 @@ void one_kill_simul(int x, int y, Point &maxKillPoint, int &maxKill){
 void gogo_kill(const Point &now, int t){
     int nx, ny;
     killTimer[now.x][now.y] = t;
-    result += arrTree[now.x][now.y];
     arrTree[now.x][now.y] = 0;
     for(int i=0; i<4; i++){
         for(int j=1; j<=K; j++){
@@ -64,10 +63,7 @@ void gogo_kill(const Point &now, int t){
 
             if(arrTree[nx][ny] == 0) break;
 
-            if(arrTree[nx][ny] > 0){
-                result += arrTree[nx][ny];
-                arrTree[nx][ny] = 0;
-            }
+            arrTree[nx][ny] = 0;
         }
     }
 }
@@ -79,7 +75,6 @@ void kill_grass(int t){
     for(int x=0; x<N; x++){
         for(int y=0; y<N; y++){
             if(arrTree[x][y] <= 0) continue;
-            if(killTimer[x][y] != 0) continue;
 
             one_kill_simul(x, y, maxKillPoint, maxKill);
         }
@@ -88,15 +83,14 @@ void kill_grass(int t){
 
     if(maxKill != -1){
         gogo_kill(maxKillPoint, t);
+        result += maxKill;
     }
 }
 
 void remove_death(int nowTime){
     for(int i=0; i<N; i++){
         for(int j=0; j<N; j++){
-            if(killTimer[i][j] == 0) continue;
-
-            if(killTimer[i][j] <= nowTime - C){
+            if(killTimer[i][j] == nowTime - C){
                 killTimer[i][j] = 0;
             }
         }
