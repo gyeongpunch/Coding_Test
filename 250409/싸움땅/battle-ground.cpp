@@ -1,199 +1,236 @@
 #include <iostream>
 #include <vector>
+#include <cstring>
+#include <algorithm>
+
 using namespace std;
-#define fastio ios::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
-#define MAX_N 20
-#define MAX_M 30
 
-struct Player {
-	int x, y, d, s, myGun;
-};
+typedef struct Player {
+	int x;
+	int y;
+	int dir;
+	int status;
+	int gun;
+	int points;
+} Player;
 
-void input();
-bool bound_check(int x, int y);
-void print_point();
-int dx[4] = { -1, 0, 1, 0 };
-int dy[4] = { 0, 1, 0, -1 };
-int N, M, K;
-vector<int> arrGun[MAX_N][MAX_N];
-Player players[MAX_M];
-int playerPoint[MAX_M];
+int n, m, k;
+vector<int> board[21][21];  // save guns
+int playerBoard[21][21];  // check where the players are at
 
-void move_player(int idx) {
-	int nx, ny;
-	nx = players[idx].x + dx[players[idx].d];
-	ny = players[idx].y + dy[players[idx].d];
+Player players[31];  // keep track of players
 
-	if (!bound_check(nx, ny)) {
-		players[idx].d = (players[idx].d + 2) % 4;
+int dx[] = { -1, 0, 1, 0 };
+int dy[] = { 0, 1, 0, -1 };
 
-		players[idx].x += dx[players[idx].d];
-		players[idx].y += dy[players[idx].d];
-	}
-	else {
-		players[idx].x = nx;
-		players[idx].y = ny;
-	}
+
+bool compare(int a, int b) {
+	return a > b;
 }
 
-void new_picking(int idx, int x, int y) {
-	int maxGun = 0;
-	int maxGunIdx = -1;
+int getOppositeDirection(int d) {
+	if (d == 0) return 2;
+	else if (d == 1) return 3;
+	else if (d == 2) return 0;
+	else return 1;
+}
 
-	if (arrGun[x][y].empty()) return;
+int rotate90(int d) {
+	if (d == 0) return 1;
+	else if (d == 1) return 2;
+	else if (d == 2) return 3;
+	else return 0;
+}
 
-	for (int i = 0; i < arrGun[x][y].size(); i++) {
-		if (maxGun < arrGun[x][y][i]) {
-			maxGun = arrGun[x][y][i];
-			maxGunIdx = i;
-		}
-	}
+void pickupGun(int i, int x, int y) {
+	if (!board[x][y].empty()) {
+		sort(board[x][y].begin(), board[x][y].end(), compare);
+		int strongestGun = board[x][y][0];
+		// cout << "Strongest Gun in " << x << ", " << y << " : " << strongestGun << endl;
 
-	if (players[idx].myGun < maxGun) {
-		if (players[idx].myGun == 0) {
-			players[idx].myGun = maxGun;
-			vector<int> tmp;
-			for (int i = 0; i < arrGun[x][y].size(); i++) {
-				if (i == maxGunIdx) continue;
-				tmp.push_back(arrGun[x][y][i]);
-			}
-			arrGun[x][y] = tmp;
+		if (players[i].gun == 0) {
+			players[i].gun = strongestGun;
+			board[x][y].erase(board[x][y].begin());
 		}
 		else {
-			int tmp = players[idx].myGun;
-			players[idx].myGun = maxGun;
-			arrGun[x][y][maxGunIdx] = tmp;
-		}
-	}
-
-}
-
-bool player_compare(int myPower, int me, int yourPower, int you) {
-	if (myPower == yourPower) return players[me].s > players[you].s;
-	return myPower > yourPower;
-}
-
-bool is_other_player(int x, int y) {
-	for (int i = 0; i < M; i++) {
-		if (x == players[i].x && y == players[i].y) return true;
-	}
-	return false;
-}
-
-void lose_player_move(int idx, int x, int y) {
-	if (players[idx].myGun != 0) {
-		arrGun[x][y].push_back(players[idx].myGun);
-		players[idx].myGun = 0;
-	}
-	
-	int nx, ny;
-
-	for(int i=0; i<4; i++) {
-		nx = players[idx].x + dx[(players[idx].d + i) % 4];
-		ny = players[idx].y + dy[(players[idx].d + i) % 4];
-
-		if (!bound_check(nx, ny)) continue;
-		if (is_other_player(nx, ny)) continue;
-
-		players[idx].x = nx;
-		players[idx].y = ny;
-		players[idx].d = (players[idx].d + i) % 4;
-		break;
-	}
-
-	new_picking(idx, players[idx].x, players[idx].y);
-}
-
-void fight_player(int idx) {
-	bool isFight = false;
-	int curX = players[idx].x, curY = players[idx].y;
-	int winnerIdx;
-
-	for (int i = 0; i < M; i++) {
-		if (i == idx) continue;
-
-		if (players[i].x == players[idx].x && players[i].y == players[idx].y) {
-			isFight = true;
-
-			int myPower = players[idx].s + players[idx].myGun;
-			int yourPower = players[i].s + players[i].myGun;
-
-			// 내가 이김
-			if (player_compare(myPower, idx, yourPower, i)) {
-				playerPoint[idx] += myPower - yourPower;
-				winnerIdx = idx;
-				lose_player_move(i, curX, curY);
-			}
-			// 쟤가 이김
-			else {
-				playerPoint[i] += yourPower - myPower;
-				winnerIdx = i;
-				lose_player_move(idx, curX,  curY);
-			}
-
-			break;
-		}
-	}
-
-	if (isFight) {
-		new_picking(winnerIdx, curX, curY);
-	}
-	else {
-		new_picking(idx, curX, curY);
-	}
-}
-
-void simulation() {
-
-	for (int i = 0; i < M; i++) {
-		move_player(i);
-
-		fight_player(i);
-
-	}
-}
-
-int main(void) {
-	fastio;
-
-	input();
-
-	for (int i = 0; i < K; i++) {
-		simulation();
-	}
-
-	print_point();
-	
-	return 0;
-}
-
-void print_point() {
-	for (int i = 0; i < M; i++) {
-		cout << playerPoint[i] << ' ';
-	}
-	cout << '\n';
-}
-
-void input() {
-	cin >> N >> M >> K;
-
-	int g;
-	for (int i = 0; i < N; i++) {
-		for (int j = 0; j < N; j++) {
-			cin >> g;
-			if (g != 0) {
-				arrGun[i][j].push_back(g);
+			if (players[i].gun < strongestGun) {  // pick up stronger gun
+				int playerGun = players[i].gun;  // the gun player was holding
+				players[i].gun = strongestGun;
+				board[x][y].erase(board[x][y].begin());
+				board[x][y].push_back(playerGun);
 			}
 		}
 	}
+}
 
-	int x, y, d, s;
-	for (int i = 0; i < M; i++) {
+
+int main() {
+	cin.tie(0);
+	cout.tie(0);
+	ios::sync_with_stdio(false);
+
+	cin >> n >> m >> k;
+	for (int i = 1; i <= n; i++) {
+		for (int j = 1; j <= n; j++) {
+			int gun;
+			cin >> gun;
+			if (gun > 0) board[i][j].push_back(gun);  // there can be more than one gun in a single space
+		}
+	}
+	memset(playerBoard, 0, sizeof(playerBoard));
+
+	for (int i = 1; i <= m; i++) {
+		int x, y, d, s;
 		cin >> x >> y >> d >> s;
-		players[i] = { x - 1, y - 1, d, s, 0 };
+		Player player;
+		player.x = x;
+		player.y = y;
+		player.dir = d;
+		player.status = s;
+		player.gun = 0;
+		player.points = 0;
+		players[i] = player;
+		playerBoard[x][y] = i;
 	}
-}
 
-bool bound_check(int x, int y) {
-	return 0 <= x && x < N && 0 <= y && y < N;
+	for (int round = 1; round <= k; round++) {
+		// move player sequentially
+		for (int i = 1; i <= m; i++) {
+			Player player = players[i];
+			int x = player.x;
+			int y = player.y;
+			int d = player.dir;
+
+			int nx = x + dx[d];
+			int ny = y + dy[d];
+
+			if (nx <= 0 || nx > n || ny <= 0 || ny > n) {  // out of bounds
+				d = getOppositeDirection(d);  // go one space in the opposite direction
+				players[i].dir = d;  // update direction
+				nx = x + dx[d];
+				ny = y + dy[d];
+			}
+
+			if (playerBoard[nx][ny] > 0) {  // there is a player
+				// battle
+				int enemyNum = playerBoard[nx][ny];
+				Player enemyPlayer = players[enemyNum];
+				int enemyStatus = enemyPlayer.status;
+				int enemyGun = enemyPlayer.gun;
+
+				// cout << i << " vs " << enemyNum << endl;
+				// cout << "player #" << i << " stat = " << players[i].status << " Gun: " << players[i].gun << endl;
+				// cout << "player #" << enemyNum << " stat = " << players[enemyNum].status << " Gun: " << players[enemyNum].gun << endl;
+
+				int winner = -1;
+				if (enemyStatus + enemyGun > player.status + player.gun) winner = 1;  // enemy wins
+				else if (enemyStatus + enemyGun < player.status + player.gun) winner = 0;  // player wins
+				else {
+					// cout << "tied" << endl;
+					if (players[enemyNum].status > players[i].status) winner = 1;
+					else winner = 0;
+				}
+
+				if (winner == 1) {  // enemy wins
+					// cout << enemyNum << " wins!!" << endl;
+					players[enemyNum].points += (enemyStatus + enemyGun - player.status - player.gun);
+					// loser puts down the gun
+					int loserGun = player.gun;
+					players[i].gun = 0;
+					// move to different empty space
+					int loserNx;
+					int loserNy;
+					while (true) {
+						loserNx = nx + dx[d];
+						loserNy = ny + dy[d];
+						if (loserNx <= 0 || loserNx > n || loserNy <= 0 || loserNy > n) {
+							d = rotate90(d);
+							continue;
+						}  // out of bounds
+						if (playerBoard[loserNx][loserNy]) {
+							d = rotate90(d);
+							continue;
+						} // there is somebody there
+
+						playerBoard[x][y] = 0;
+						playerBoard[loserNx][loserNy] = i;
+						players[i].x = loserNx;
+						players[i].y = loserNy;
+						players[i].dir = d;
+
+						pickupGun(i, loserNx, loserNy);
+						break;
+
+					}
+					// enemy chooses next gun to pick up
+					if (loserGun > enemyGun) {  // the gun that loser dropped must be stronger to pick it up
+						board[nx][ny].push_back(loserGun);
+						players[enemyNum].gun = loserGun;
+					}
+					else {
+						if (loserGun != 0) {
+							board[nx][ny].push_back(loserGun);  // just put it down
+						}
+					}
+
+				}
+				else if (winner == 0) {  // player wins
+				 // cout << i << " wins!!" << endl;
+					playerBoard[x][y] = 0;  // move player to nx ny
+					players[i].x = nx;
+					players[i].y = ny;
+
+					players[i].points += (player.status + player.gun - enemyStatus - enemyGun);  // gain points
+					// enemy drops gun
+					board[nx][ny].push_back(enemyGun);
+					players[enemyNum].gun = 0;
+
+					// enemy moves
+					int loserNx;
+					int loserNy;
+					int enemyDir = players[enemyNum].dir;
+					while (true) {
+						loserNx = nx + dx[enemyDir];
+						loserNy = ny + dy[enemyDir];
+						if (loserNx <= 0 || loserNx > n || loserNy <= 0 || loserNy > n) {  // out of bounds
+							enemyDir = rotate90(enemyDir);
+							continue;
+						}
+						if (playerBoard[loserNx][loserNy]) {  // there is somebody there
+							enemyDir = rotate90(enemyDir);
+							continue;
+						}
+
+						playerBoard[nx][ny] = i;  // player moves into this space
+						playerBoard[loserNx][loserNy] = enemyNum;
+						players[enemyNum].x = loserNx;
+						players[enemyNum].y = loserNy;
+						players[enemyNum].dir = enemyDir;
+
+						pickupGun(enemyNum, loserNx, loserNy);
+						break;
+					}
+					pickupGun(i, nx, ny);
+				}
+			}
+			else {  // there is no player there
+			 // update players
+				players[i].x = nx;
+				players[i].y = ny;
+				// update board
+				playerBoard[x][y] = 0;
+				playerBoard[nx][ny] = i;
+
+				pickupGun(i, nx, ny);
+			}
+			// player picks up the gun
+			// pickupGun(i, nx, ny);
+		}
+	}
+
+	for (int i = 1; i <= m; i++) {
+		cout << players[i].points << " ";
+	}
+	cout << endl;
+	return 0;
 }
