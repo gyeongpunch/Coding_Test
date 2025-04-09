@@ -178,7 +178,6 @@ void spread(){
     for(int x=0; x<N; x++){
         for(int y=0; y<N; y++){
             if(arrTreeTmp[x][y] <= 0) continue;
-            if(killTimer[x][y] != 0) continue;
 
             arrTree[x][y] = arrTreeTmp[x][y];
         }
