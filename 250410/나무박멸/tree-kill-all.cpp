@@ -144,7 +144,6 @@ void spread(){
     for(int x=0; x<N; x++){
         for(int y=0; y<N; y++){
             if(arrTree[x][y] <= 0) continue;
-            if(killTimer[x][y] != 0) continue;
 
             int cnt = 0;
             for(int i=0; i<4; i++){
@@ -178,7 +177,6 @@ void spread(){
     for(int x=0; x<N; x++){
         for(int y=0; y<N; y++){
             if(arrTreeTmp[x][y] <= 0) continue;
-
             arrTree[x][y] = arrTreeTmp[x][y];
         }
     }
@@ -190,7 +188,6 @@ void grow(){
     for(int x=0; x<N; x++){
         for(int y=0; y<N; y++){
             if(arrTree[x][y] <= 0) continue;
-            if(killTimer[x][y] != 0) continue;
 
             int cnt = 0;
             for(int i=0; i<4; i++){
@@ -199,7 +196,6 @@ void grow(){
 
                 if(!bound_check(nx, ny)) continue;
                 if(arrTree[nx][ny] <= 0) continue;
-                if(killTimer[nx][ny] != 0) continue;
 
                 cnt++;
             }
