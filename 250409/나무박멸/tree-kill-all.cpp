@@ -80,8 +80,11 @@ void kill_grass(int t){
         }
     }
 
-    result += maxKill;
-    gogo_kill(maxKillPoint, t);
+
+    if(maxKill != -1){
+        result += maxKill;
+        gogo_kill(maxKillPoint, t);
+    }
 }
 
 void remove_death(int nowTime){
