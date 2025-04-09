@@ -164,8 +164,10 @@ int main() {
 					}
 					// enemy chooses next gun to pick up
 					if (loserGun > enemyGun) {  // the gun that loser dropped must be stronger to pick it up
-						board[nx][ny].push_back(loserGun);
-						players[enemyNum].gun = loserGun;
+						if (loserGun != 0) {
+							board[nx][ny].push_back(loserGun);
+							players[enemyNum].gun = loserGun;
+						}
 					}
 					else {
 						if (loserGun != 0) {
