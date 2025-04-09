@@ -182,8 +182,10 @@ int main() {
 
 					players[i].points += (player.status + player.gun - enemyStatus - enemyGun);  // gain points
 					// enemy drops gun
-					board[nx][ny].push_back(enemyGun);
-					players[enemyNum].gun = 0;
+					if (enemyGun != 0) {
+						board[nx][ny].push_back(enemyGun);
+						players[enemyNum].gun = 0;
+					}
 
 					// enemy moves
 					int loserNx;
