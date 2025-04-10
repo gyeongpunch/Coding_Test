@@ -12,10 +12,10 @@ struct Point {
 int N, result = 0;
 int arr[MAX_N][MAX_N];
 int arrTmp[MAX_N][MAX_N];
-int groupBound[MAX_N + 1][MAX_N + 1];
-int groupCnt[MAX_N + 1];
+int groupBound[MAX_N * MAX_N + 1][MAX_N * MAX_N + 1];
+int groupCnt[MAX_N * MAX_N + 1];
 int visited[MAX_N][MAX_N];
-int arrGroupNum[MAX_N * MAX_N];
+int arrGroupNum[MAX_N * MAX_N + 1];
 int dx[4] = { -1, 0, 1, 0 };
 int dy[4] = { 0, 1, 0, -1 };
 
