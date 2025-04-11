@@ -27,6 +27,18 @@ bool bound_check(int x, int y) {
 	return 0 <= x && x < N && 0 <= y && y < N;
 }
 
+void pprint() {
+	cout << "\nresult : " << result << '\n';
+	cout << "============================\n";
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			cout << arr[i][j] << ' ';
+		}
+		cout << '\n';
+	}
+	cout << "============================\n";
+}
+
 void red_visited_reset() {
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
@@ -75,12 +87,14 @@ void find_bfs(Info &maxInfo, int x, int y) {
 
 	if (nowInfo.sz < 2) return;
 
-	if (maxInfo.sz < nowInfo.sz || 
-		((maxInfo.sz == nowInfo.sz && maxInfo.redCnt > nowInfo.redCnt) || 
-		((maxInfo.redCnt == nowInfo.redCnt && maxInfo.maxX < nowInfo.maxX) || 
-		(maxInfo.maxX == nowInfo.maxX && maxInfo.minY > nowInfo.minY)))) {
+	if (nowInfo.sz > maxInfo.sz ||
+		(nowInfo.sz == maxInfo.sz && nowInfo.redCnt > maxInfo.redCnt) ||
+		(nowInfo.sz == maxInfo.sz && nowInfo.redCnt == maxInfo.redCnt && nowInfo.maxX > maxInfo.maxX) ||
+		(nowInfo.sz == maxInfo.sz && nowInfo.redCnt == maxInfo.redCnt && nowInfo.maxX == maxInfo.maxX && nowInfo.minY > maxInfo.minY))
+	{
 		maxInfo = nowInfo;
 	}
+
 }
 
 void boom(int x, int y) {
@@ -117,15 +131,13 @@ void drop() {
 			if (arr[x][y] == -2) continue;
 
 			else if (arr[x][y] == -1) {
-				if (x - 1 < 0) break;
 				curX = x - 1;
 			}
 			else if (0 <= arr[x][y]) {
-				arr[curX][y] = arr[x][y];
 				if (x != curX) {
+					arr[curX][y] = arr[x][y];
 					arr[x][y] = -2;
 				}
-				if (curX - 1 < 0) break;
 				curX--;
 			}
 		}
@@ -160,14 +172,16 @@ bool simulation() {
 	if (maxInfo.sz == 0) return false;
 	boom(maxInfo.x, maxInfo.y);
 	result += maxInfo.sz * maxInfo.sz;
-
+	// pprint();
 	drop();
-
+	// pprint();
 	rotate();
-
+	// pprint();
 	drop();
+	// pprint();
 	return true;
 }
+
 
 int main(void) {
 	fastio;
