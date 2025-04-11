@@ -88,9 +88,9 @@ void find_bfs(Info &maxInfo, int x, int y) {
 	if (nowInfo.sz < 2) return;
 
 	if (nowInfo.sz > maxInfo.sz ||
-		(nowInfo.sz == maxInfo.sz && nowInfo.redCnt > maxInfo.redCnt) ||
+		(nowInfo.sz == maxInfo.sz && nowInfo.redCnt < maxInfo.redCnt) ||
 		(nowInfo.sz == maxInfo.sz && nowInfo.redCnt == maxInfo.redCnt && nowInfo.maxX > maxInfo.maxX) ||
-		(nowInfo.sz == maxInfo.sz && nowInfo.redCnt == maxInfo.redCnt && nowInfo.maxX == maxInfo.maxX && nowInfo.minY > maxInfo.minY))
+		(nowInfo.sz == maxInfo.sz && nowInfo.redCnt == maxInfo.redCnt && nowInfo.maxX == maxInfo.maxX && nowInfo.minY < maxInfo.minY))
 	{
 		maxInfo = nowInfo;
 	}
