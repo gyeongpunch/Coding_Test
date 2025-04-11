@@ -127,9 +127,6 @@ void drop() {
 				}
 				if (curX - 1 < 0) break;
 				curX--;
-				while (arr[curX - 1][y] == -1 && curX < x) {
-					curX--;
-				}
 			}
 		}
 	}
@@ -170,21 +167,6 @@ bool simulation() {
 
 	drop();
 	return true;
-}
-
-bool is_over() {
-	Info maxInfo = { 0, 0, 0, 0, 0, 0 };
-	memset(visited, 0, sizeof(visited));
-
-	for (int x = 0; x < N; x++) {
-		for (int y = 0; y < N; y++) {
-			if (visited[x][y] == 0 && 1 <= arr[x][y]) {
-				find_bfs(maxInfo, x, y);
-			}
-		}
-	}
-
-	return maxInfo.sz != 0;
 }
 
 int main(void) {
