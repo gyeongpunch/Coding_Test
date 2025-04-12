@@ -53,24 +53,31 @@ void get_attack_harm(){
                 attack.damage = arr[i][j]; attack.p = {i, j}; attack.lastA = timeMap[i][j];
             }
 
-            if(harm.damage < arr[i][j]){
+            if(harm.damage < arr[i][j] ||
+            (harm.damage == arr[i][j] && (harm.lastH > timeMap[i][j] ||
+            (harm.lastH == timeMap[i][j] && (harm.p.x + harm.p.y > i + j ||
+            (harm.p.x + harm.p.y == i + j && (harm.p.y > j))))))){
                 harm.damage = arr[i][j]; harm.p = {i, j}; harm.lastH = timeMap[i][j];
             }
-            else if (harm.damage == arr[i][j]){
-                if(harm.lastH > timeMap[i][j]){
-                    harm.damage = arr[i][j]; harm.p = {i, j}; harm.lastH = timeMap[i][j];
-                }
-                else if (harm.lastH == timeMap[i][j]){
-                    if(harm.p.x+harm.p.y > i + j){
-                        harm.damage = arr[i][j]; harm.p = {i, j}; harm.lastH = timeMap[i][j];
-                    }
-                    else if (harm.p.x+harm.p.y == i + j){
-                        if(harm.p.y > j){
-                            harm.damage = arr[i][j]; harm.p = {i, j}; harm.lastH = timeMap[i][j];
-                        }
-                    }
-                }
-            }
+
+            // if(harm.damage < arr[i][j]){
+            //     harm.damage = arr[i][j]; harm.p = {i, j}; harm.lastH = timeMap[i][j];
+            // }
+            // else if (harm.damage == arr[i][j]){
+            //     if(harm.lastH > timeMap[i][j]){
+            //         harm.damage = arr[i][j]; harm.p = {i, j}; harm.lastH = timeMap[i][j];
+            //     }
+            //     else if (harm.lastH == timeMap[i][j]){
+            //         if(harm.p.x+harm.p.y > i + j){
+            //             harm.damage = arr[i][j]; harm.p = {i, j}; harm.lastH = timeMap[i][j];
+            //         }
+            //         else if (harm.p.x+harm.p.y == i + j){
+            //             if(harm.p.y > j){
+            //                 harm.damage = arr[i][j]; harm.p = {i, j}; harm.lastH = timeMap[i][j];
+            //             }
+            //         }
+            //     }
+            // }
         }
     }
     if(attack.p.x == harm.p.x && attack.p.y == harm.p.y) return;
