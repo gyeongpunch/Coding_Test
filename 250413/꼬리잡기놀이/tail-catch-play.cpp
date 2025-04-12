@@ -1,273 +1,232 @@
 #include <iostream>
 #include <vector>
-#include <queue>
-#include <cstring>
 #include <algorithm>
+#include <cstring>
+#include <queue>
+
 using namespace std;
 #define fastio ios::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 #define MAX_N 20
 #define MAX_M 5
 
-struct Point{
-    int x, y;
-};
+void input();
+bool bound_check(int x, int y);
+void grouping();
+void bfs(int x, int y, int groupNum);
+void total_move();
 
-struct Info{
-    vector<Point> dq;
-    int state;
+struct Point {
+	int x, y;
 };
 
 int N, M, K;
 int arr[MAX_N][MAX_N];
-int groupMap[MAX_N][MAX_N];
-int groupCnt[MAX_N];
+int arrMap[MAX_N][MAX_N];
 int visited[MAX_N][MAX_N];
-vector<Point> team[MAX_M];
-int dx[4] = {-1, 0, 1, 0};
-int dy[4] = {0, 1, 0, -1};
+vector<Point> team[MAX_M + 1];
+int dx[4] = { -1, 0, 1, 0 };
+int dy[4] = { 0, 1, 0, -1 };
 int result = 0;
 
-bool bound_check(int x, int y){
-    return 0<=x && x<N && 0<=y && y<N;
+void plus_score(int x, int y, int groupNum) {
+	for (int i = 0; i < team[groupNum].size(); i++) {
+		if (team[groupNum][i].x == x && team[groupNum][i].y == y) {
+			result += (i + 1) * (i + 1);
+			return;
+		}
+	}
 }
 
-void pprint(){
-    cout << "\n\n";
-    for(int i=0; i<M; i++){
-        for(Point a : team[i]){
-            cout << a.x << ' ' << a.y << '\n';
-        }
-        cout << "=======\n";
-    }
-    cout << "\n\n";
-}
+void reverse(int groupNum) {
+	vector<Point> tmp;
+	for (int i = team[groupNum].size() - 1; i > -1; i--) {
+		tmp.push_back(team[groupNum][i]);
+	}
+	team[groupNum] = tmp;
 
-void group_bfs(int groupIdx, int x, int y){
-    queue<Point> q;
-    q.push({x, y});
-    visited[x][y] = 1;
-    groupMap[x][y] = groupIdx;
-    team[groupIdx].push_back({x, y});
-
-    int nx, ny;
-    while(!q.empty()){
-        Point now = q.front(); q.pop();
-        if(1<=arr[now.x][now.y] && arr[now.x][now.y]<=3){
-            groupCnt[groupIdx]++;
-        }
-        for(int i=0; i<4; i++){
-            nx = now.x + dx[i];
-            ny = now.y + dy[i];
-
-            if(!bound_check(nx, ny)) continue;
-            if(visited[nx][ny] == 1) continue;
-            if(arr[nx][ny] == 0) continue;
-
-            if(arr[x][y] == 1 && arr[nx][ny] == 3) continue;
-
-            groupMap[nx][ny] = groupIdx;
-            q.push({nx, ny});
-            visited[nx][ny] = 1;
-            team[groupIdx].push_back({nx, ny});
-        }
-    }
+	for (int i = 0; i < tmp.size(); i++) {
+		if (i == 0) {
+			arr[tmp[i].x][tmp[i].y] = 1;
+		}
+		else if (i == tmp.size() - 1) {
+			arr[tmp[i].x][tmp[i].y] = 3;
+		}
+		else {
+			arr[tmp[i].x][tmp[i].y] = 2;
+		}
+	}
 
 }
 
-bool check(int x, int y, int groupIdx){
-    for(int i=0; i<team[groupIdx].size(); i++){
-        if(x==team[groupIdx][i].x && y==team[groupIdx][i].y){
-            result += (i+1) * (i+1);
-            return true;
-        }
-    }
-    return false;
+void left_gogo(int x) {
+	for (int y = 0; y < N; y++) {
+		if (1 <= arr[x][y] && arr[x][y] <= 3) {
+			plus_score(x, y, arrMap[x][y]);
+			reverse(arrMap[x][y]);
+			return;
+		}
+	}
 }
 
-void change_head_tail(int groupIdx){
-    vector<Point> tmp;
-    memset(visited, 0, sizeof(visited));
-    queue<Point> q;
-    int x = team[groupIdx][groupCnt[groupIdx]-1].x;
-    int y = team[groupIdx][groupCnt[groupIdx]-1].y;
-    q.push({x, y});
-    visited[x][y] = 1;
-
-    int nx, ny;
-    while(!q.empty()){
-        Point now = q.front(); q.pop();
-        
-        tmp.push_back(now);
-
-        for(int i=0; i<4; i++){
-            nx = now.x + dx[i];
-            ny = now.y + dy[i];
-
-            if(!bound_check(nx, ny)) continue;
-            if(visited[nx][ny] == 1) continue;
-            if(arr[nx][ny] == 0) continue;
-
-            if(arr[x][y] == 3 && arr[nx][ny] == 1) continue;
-
-            q.push({nx, ny});
-            visited[nx][ny] = 1;
-        }
-    }
-
-    for(int j=0; j<team[groupIdx].size(); j++){
-        if(j==0){
-            arr[team[groupIdx][j].x][team[groupIdx][j].y] = 1;
-        }
-        else if(j<groupCnt[groupIdx]-1){
-            arr[team[groupIdx][j].x][team[groupIdx][j].y] = 2;
-        }
-        else if (j==groupCnt[groupIdx]-1){
-            arr[team[groupIdx][j].x][team[groupIdx][j].y] = 3;
-        }
-        else{
-            arr[team[groupIdx][j].x][team[groupIdx][j].y] = 4;
-        }
-    }
+void bottom_gogo(int y) {
+	for (int x = N - 1; x > -1; x--) {
+		if (1 <= arr[x][y] && arr[x][y] <= 3) {
+			plus_score(x, y, arrMap[x][y]);
+			reverse(arrMap[x][y]);
+			return;
+		}
+	}
 }
 
-void left_gogo(int x){
-    for(int y=0; y<N; y++){
-        if(1 <= arr[x][y] &&  arr[x][y] <= 3){
-            for(int i=0; i < team[groupMap[x][y]].size(); i++){
-                if(team[groupMap[x][y]][i].x == x && team[groupMap[x][y]][i].y == y){
-                    result += (i+1) * (i+1);
-                    change_head_tail(groupMap[x][y]);
-                    return;
-                }
-            }
-        }
-    }
-}
-void bottom_gogo(int y){
-    for(int x=N-1; x>-1; x--){
-        if(1 <= arr[x][y] &&  arr[x][y] <= 3){
-            for(int i=0; i < team[groupMap[x][y]].size(); i++){
-                if(team[groupMap[x][y]][i].x == x && team[groupMap[x][y]][i].y == y){
-                    result += (i+1) * (i+1);
-                    change_head_tail(groupMap[x][y]);
-                    return;
-                }
-            }
-        }
-    }
-}
-void right_gogo(int x){
-    x = N - x - 1;
-    for(int y=N-1; y>-1; y--){
-        if(1 <= arr[x][y] &&  arr[x][y] <= 3){
-            for(int i=0; i < team[groupMap[x][y]].size(); i++){
-                if(team[groupMap[x][y]][i].x == x && team[groupMap[x][y]][i].y == y){
-                    result += (i+1) * (i+1);
-                    change_head_tail(groupMap[x][y]);
-                    return;
-                }
-            }
-        }
-    }
-}
-void top_gogo(int y){
-    y = N - y - 1;
-    for(int x=0; x<N; x++){
-        if(1 <= arr[x][y] &&  arr[x][y] <= 3){
-            for(int i=0; i < team[groupMap[x][y]].size(); i++){
-                if(team[groupMap[x][y]][i].x == x && team[groupMap[x][y]][i].y == y){
-                    result += (i+1) * (i+1);
-                    change_head_tail(groupMap[x][y]);
-                    return;
-                }
-            }
-        }
-    }
+void right_gogo(int x) {
+	for (int y = N - 1; y > -1; y--) {
+		if (1 <= arr[x][y] && arr[x][y] <= 3) {
+			plus_score(x, y, arrMap[x][y]);
+			reverse(arrMap[x][y]);
+			return;
+		}
+	}
 }
 
-void total_move(){
-    for(int i=0; i<M; i++){
-        Point tmp = team[i][0];
-
-        for(int j=0; j<team[i].size()-1; j++){
-            team[i][j] = team[i][j+1];
-            // cout << team[i][j].x << ' ' << team[i][j].y << '\n';
-        }
-        team[i][team[i].size()-1] = tmp;
-        
-        for(int j=0; j<team[i].size(); j++){
-            if(j==0){
-                arr[team[i][j].x][team[i][j].y] = 1;
-            }
-            else if(j<groupCnt[i]-1){
-                arr[team[i][j].x][team[i][j].y] = 2;
-            }
-            else if (j==groupCnt[i]-1){
-                arr[team[i][j].x][team[i][j].y] = 3;
-            }
-            else{
-                arr[team[i][j].x][team[i][j].y] = 4;
-            }
-        }
-    }
+void top_gogo(int y) {
+	for (int x = 0; x < N; x++) {
+		if (1 <= arr[x][y] && arr[x][y] <= 3) {
+			plus_score(x, y, arrMap[x][y]);
+			reverse(arrMap[x][y]);
+			return;
+		}
+	}
 }
 
-void apring(){
-    cout << "============\n";
-    for(int i=0; i<N; i++){
-        for(int j=0; j<N; j++){
-            cout << arr[i][j] << ' ';
-        }
-        cout << '\n';
-    }
-    cout << "============\n";
+void simulation() {
+	for (int k = 0; k < K; k++) {
+
+ 		total_move();
+
+
+		int now_k = k % (N * 4);
+
+		if (0 <= now_k && now_k < N) {
+			left_gogo(now_k);
+		}
+		else if (N <= now_k && now_k < N*2) {
+			now_k -= N;
+			bottom_gogo(now_k);
+		}
+		else if (N*2 <= now_k && now_k < N*3) {
+			now_k -= N * 2;
+			right_gogo(N- now_k -1);
+		}
+		else if (N*3 <= now_k && now_k < N*4) {
+			now_k -= N * 3;
+			top_gogo(N- now_k -1);
+		}
+	}
 }
 
-int main() {
-    fastio;
+int main(void) {
+	fastio;
 
-    cin >> N >> M >> K;
-    for(int i=0; i<N; i++){
-        for(int j=0; j<N; j++){
-            cin >> arr[i][j];
-        }
-    }
+	input();
+	grouping();
+	
+	simulation();
+	
+	cout << result << '\n';
 
-    memset(groupMap, -1, sizeof(groupMap));
+	return 0;
+}
 
-    int groupIdx = 0;
-    for(int i=0; i<N; i++){
-        for(int j=0; j<N; j++){
-            if(visited[i][j] == 0 && arr[i][j] == 1){
-                group_bfs(groupIdx, i, j);
-                groupIdx++;
-            }
-        }
-    }
+void total_move() {
+	int nx, ny;
+	for (int i = 1; i <= M; i++) {
+		vector<Point> tmp;
 
-    for(int t=0; t<K; t++){
-        total_move();
+		Point now = team[i][0];
 
-        t %= (N * 4);
+		for (int j = 0; j < 4; j++) {
+			nx = now.x + dx[j];
+			ny = now.y + dy[j];
 
-        if(0<=t && t<N){
-            left_gogo(t);
-        }
-        else if(N<=t && t<2*N){
-            // pprint();
-            bottom_gogo(t - N);
-        }
-        else if(2*N<=t && t<3*N){
-            right_gogo(t - N*2);
-        }
-        else if(3*N<=t && t<4*N){
-            top_gogo(t - N*3);
-        }
-        apring();
-        // pprint();
-    }
+			if (!bound_check(nx, ny)) continue;
+			if (arrMap[now.x][now.y] != arrMap[nx][ny]) continue;
+			if (arr[nx][ny] == 2) continue;
 
-    cout << result << '\n';
+			tmp.push_back({ nx, ny });
+			break;
+		}
 
-    return 0;
+		for (int j = 0; j < team[i].size() - 1; j++) {
+			tmp.push_back(team[i][j]);
+		}
+
+		arr[team[i].back().x][team[i].back().y] = 4;
+		arr[team[i][0].x][team[i][0].y] = 2;
+
+		arr[tmp.back().x][tmp.back().y] = 3;
+		arr[tmp[0].x][tmp[0].y] = 1;
+
+		team[i] = tmp;
+	}
+}
+
+void grouping() {
+	int groupNum = 1;
+	for (int i = 0; i < N; i++)
+	{
+		for (int j = 0; j < N; j++)
+		{
+			if (arr[i][j] == 1) {
+				bfs(i, j, groupNum++);
+			}
+		}
+	}
+}
+
+void bfs(int x, int y, int groupNum) {
+	queue<Point> q;
+	q.push({ x, y });
+	visited[x][y] = 1;
+	arrMap[x][y] = groupNum;
+	team[groupNum].push_back({ x, y });
+
+	int nx, ny;
+	while (!q.empty()) {
+		Point now = q.front(); q.pop();
+
+		for (int i = 0; i < 4; i++) {
+			nx = now.x + dx[i];
+			ny = now.y + dy[i];
+
+			if (!bound_check(nx, ny)) continue;
+			if (visited[nx][ny] == 1) continue;
+			if (arr[nx][ny] == 0) continue;
+
+			if (arr[now.x][now.y] == 1 && arr[nx][ny] != 2) continue;
+			
+			if (arr[nx][ny] != 4) {
+				team[groupNum].push_back({ nx, ny });
+			}
+			q.push({ nx, ny });
+			visited[nx][ny] = 1;
+			arrMap[nx][ny] = groupNum;
+			break;
+			
+		}
+	}
+}
+
+void input() {
+	cin >> N >> M >> K;
+	for (int i = 0; i < N; i++)
+	{
+		for (int j = 0; j < N; j++)
+		{
+			cin >> arr[i][j];
+		}
+	}
+}
+
+bool bound_check(int x, int y) {
+	return 0 <= x && x < N && 0 <= y && y < N;
 }
