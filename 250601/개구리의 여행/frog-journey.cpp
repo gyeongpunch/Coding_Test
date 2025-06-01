@@ -61,25 +61,20 @@ void solution() {
         int nowTime = node.time;
         int nowJump = node.jump;
 
-        // 1) pop 시점에 '방문한 적이 있으면' 즉시 skip
         if (visited[cx][cy][nowJump] != -1) 
             continue;
 
-        // 2) '방문 기록'이 아직 없으면 이 순간이 최단 시간
         visited[cx][cy][nowJump] = nowTime;
 
-        // 3) 목표 지점 도달 → 최단 시간 확정 → 즉시 return
         if (cx == End.x && cy == End.y) {
             result = nowTime;
             return;
         }
 
-        // 4) jump 이동 (거리 = nowJump, 비용 +1)
         for (int dir = 0; dir < 4; dir++) {
             int nx = cx + dx[dir] * nowJump;
             int ny = cy + dy[dir] * nowJump;
             if (!bound_check(nx, ny)) continue;
-            // 착지는 오직 '.'만 허용
             if (arr[nx][ny] != '.') continue;
 
             bool blocked = false;
@@ -99,7 +94,6 @@ void solution() {
             }
         }
 
-        // 5) 점프력 증가 (newJump = nowJump+1, 비용 = newJump^2)
         if (nowJump < 5) {
             int newJump = nowJump + 1;
             int newTime = nowTime + newJump * newJump;
@@ -108,7 +102,6 @@ void solution() {
             }
         }
 
-        // 6) 점프력 감소 (newJump = 1..nowJump-1, 비용 +1)
         for (int newJump = 1; newJump < nowJump; newJump++) {
             int newTime = nowTime + 1;
             if (visited[cx][cy][newJump] == -1) {
