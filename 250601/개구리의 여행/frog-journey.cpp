@@ -117,6 +117,9 @@ void solution() {
 }
 
 int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
     init_input();
     
     for(int i=0; i<Q; i++){
@@ -125,10 +128,10 @@ int main() {
         solution();
 
         if(result == 1e9){
-            cout << -1 << endl;
+            cout << -1 << '\n';
         }
         else{
-            cout << result << endl;
+            cout << result << '\n';
         }
     }
     
