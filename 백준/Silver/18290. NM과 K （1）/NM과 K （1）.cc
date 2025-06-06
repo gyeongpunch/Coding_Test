@@ -35,24 +35,23 @@ bool is_avail(int x, int y){
     return true;
 }
 
-void get_result(int depth){
+void get_result(int depth, int prev){
     if(depth == K){
         result = max(result, nowSum);
         return;
     }
 
-    for(int i=0; i<N; i++){
-        for(int j=0; j<M; j++){
-            if(visited[i][j] == 0 && is_avail(i, j)){
+    for(int idx=prev; idx<N*M; idx++){
+        int i = idx/M, j = idx%M;
+        if(visited[i][j] == 0 && is_avail(i, j)){
                 visited[i][j] = 1;
                 nowSum += arr[i][j];
 
-                get_result(depth + 1);
+                get_result(depth + 1, idx+1);
 
                 visited[i][j] = 0;
                 nowSum -= arr[i][j];
             }
-        }
     }
 }
 
@@ -68,7 +67,7 @@ int main(void){
         }
     }
 
-    get_result(0);
+    get_result(0, 0);
 
     cout << result << '\n';
 
