@@ -14,8 +14,8 @@ const int MX=10;
 int K;
 char op[MX];
 vector<int> path;
-vector<string> all_numbers;
 int visited[10];
+string mx = "0000000000", mn = "9999999999";
 
 void get_all_nums(int depth){
     if(depth == K+1){
@@ -23,12 +23,16 @@ void get_all_nums(int depth){
         for(int n : path){
             str = str + (char)('0' + n);
         }
-        all_numbers.push_back(str);
+        mx = max(mx, str);
+        mn = min(mn, str);
         return;
     }
 
     for(int i=0; i<10; i++){
-        if(depth == 0){
+        if(visited[i] == 1) continue;
+        if(depth == 0 || 
+        (op[depth-1] == '<' && path[depth-1] < i) || 
+        (op[depth-1] == '>' && path[depth-1] > i)){
             path.push_back(i);
             visited[i] = 1;
 
@@ -36,19 +40,6 @@ void get_all_nums(int depth){
 
             path.pop_back();
             visited[i] = 0;
-        }
-        else{
-            if(visited[i] == 0){
-                if((op[depth-1] == '<' && path[depth-1] < i) || (op[depth-1] == '>' && path[depth-1] > i)){
-                    path.push_back(i);
-                    visited[i] = 1;
-
-                    get_all_nums(depth+1);
-
-                    path.pop_back();
-                    visited[i] = 0;
-                }
-            }
         }
     }
 }
@@ -65,9 +56,7 @@ int main(void){
 
     get_all_nums(0);
 
-    sort(all_numbers.begin(), all_numbers.end());
-
-    cout << all_numbers[all_numbers.size()-1] << '\n' << all_numbers[0] << '\n';
+    cout << mx << '\n' << mn << '\n';
 
     return 0;
 }
