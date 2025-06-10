@@ -13,7 +13,6 @@ const int MX = 4;
 
 int N, M;
 int arr[MX][MX];
-int result = 0;
 
 int main(void){
     fastio;
@@ -21,45 +20,52 @@ int main(void){
     // freopen("input.txt", "r", stdin);
 
     cin >> N >> M;
-    for (int i = 0; i < N; i++) {
-        string s;
+    string s;
+    for(int i=0; i<N; i++){
         cin >> s;
-        for (int j = 0; j < M; j++){
-            arr[i][j] = s[j] - '0';
+        for(int j=0; j<M; j++){
+            arr[i][j] = (int)(s[j] - '0');
         }
     }
 
-    for (int bit = 0; bit < (1 << (N*M)); bit++) {
-        int sum = 0;
+    
+    int result = 0;
+    for(int flag=0; flag < (1<<(N*M)); flag++){
+        int sum = 0, tmp = 0;
 
-        for (int i = 0; i < N; i++) {
-            int num = 0;
-            for (int j = 0; j < M; j++) {
-                int idx = i * M + j;
-                if ((bit & (1 << idx)) == 0) {
-                    num = num * 10 + arr[i][j];
-                } else {
-                    sum += num;
-                    num = 0;
+        for(int i=0; i<N; i++){
+            for(int j=0; j<M; j++){
+                int idx = M*i+j;
+                if((flag & (1<<idx)) == 0){
+                    tmp = tmp*10 + arr[i][j];
+                }
+                else{
+                    sum += tmp;
+                    tmp = 0;
                 }
             }
-            sum += num;
+            sum += tmp;
+            tmp = 0;
         }
-        for (int j = 0; j < M; j++) {
-            int num = 0;
-            for (int i = 0; i < N; i++) {
-                int idx = i * M + j;
-                if ((bit & (1 << idx)) != 0) {
-                    num = num * 10 + arr[i][j];
-                } else {
-                    sum += num;
-                    num = 0;
+
+        for(int j=0; j<M; j++){
+            for(int i=0; i<N; i++){
+                int idx = M*i+j;
+                if((flag & (1<<idx)) != 0){
+                    tmp = tmp*10 + arr[i][j];
+                }
+                else{
+                    sum += tmp;
+                    tmp = 0;
                 }
             }
-            sum += num;
+            sum += tmp;
+            tmp = 0;
         }
         result = max(result, sum);
     }
+
     cout << result << '\n';
+
     return 0;
 }
