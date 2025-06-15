@@ -19,22 +19,17 @@ struct Edge{
     }
 };
 
-struct Edge1{
-    int n;
-    ll c;
-};
-
 const int Ve = 10001;
 
 int V, E;
-vector<Edge1> arr[Ve];
+vector<Edge> arr[Ve];
 int visited[Ve];
 ll result = 0;
 
 void get_result(){
     priority_queue<Edge> pq;
     visited[1] = 1;
-    for(Edge1 n : arr[1]){
+    for(Edge n : arr[1]){
         pq.push({n.n, n.c});
     }
 
@@ -44,7 +39,7 @@ void get_result(){
         visited[now.n] = 1;
         result += now.c;
 
-        for(Edge1 nx : arr[now.n]){
+        for(Edge nx : arr[now.n]){
             if(visited[nx.n] == 1) continue;
 
             pq.push({nx.n, nx.c});
