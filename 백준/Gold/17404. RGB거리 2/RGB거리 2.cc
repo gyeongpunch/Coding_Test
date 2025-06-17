@@ -14,7 +14,7 @@ const int MX=1000;
 
 int N;
 int arr[MX][3];
-int dp[3][MX][3];
+int dp[MX][3];
 int result = 1e9;
 
 int main(void){
@@ -29,19 +29,20 @@ int main(void){
         }
     }
 
-    for(int i=0; i<3; i++){
-        dp[i][0][i] = arr[0][i];
-        for(int j=1; j<N; j++){
-            for(int k=0; k<3; k++){
-                for(int l=0; l<3; l++){
-                    if(k==l) continue;
-                    if((dp[i][j][k]==0 || dp[i][j][k] > dp[i][j-1][l] + arr[j][k]) && dp[i][j-1][l] != 0){
-                        dp[i][j][k] = dp[i][j-1][l] + arr[j][k];
-                    }
-                }
-                if(j==N-1 && dp[i][j][k] < result && dp[i][j][k]!=0 && i!=k){
-                    result = dp[i][j][k];
-                }
+    for(int first=0; first<3; first++){
+        for(int i=0; i<3; i++){
+            dp[0][i] = i==first ? arr[0][i] : 1e9;
+        }
+
+        for(int i=1; i<N; i++){
+            dp[i][0] = min(dp[i-1][1], dp[i-1][2]) + arr[i][0];
+            dp[i][1] = min(dp[i-1][0], dp[i-1][2]) + arr[i][1];
+            dp[i][2] = min(dp[i-1][0], dp[i-1][1]) + arr[i][2];
+        }
+
+        for(int last=0; last<3; last++){
+            if(result > dp[N-1][last] && first!=last){
+                result = dp[N-1][last];
             }
         }
     }
