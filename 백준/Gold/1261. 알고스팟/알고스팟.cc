@@ -7,6 +7,7 @@
 #include <set>
 #include <map>
 #include <queue>
+#include <deque>
 #include <stack>
 #include <cstring>
 
@@ -31,30 +32,28 @@ bool bound_check(int x, int y){
 }
 
 void bfs(){
-    queue<Point> q;
+    deque<Point> q;
     memset(visited, -1, sizeof(visited));
-    q.push({0, 0});
+    q.push_front({0, 0});
     visited[0][0] = 0;
 
     while(!q.empty()){
-        Point now = q.front(); q.pop();
+        Point now = q.front(); q.pop_front();
 
         for(int i=0; i<4; i++){
             int nx=now.x+dx[i];
             int ny=now.y+dy[i];
 
             if(!bound_check(nx, ny)) continue;
+            if(visited[nx][ny] != -1) continue;
+
             if(arr[nx][ny] == 0){
-                if(visited[nx][ny]==-1 || visited[nx][ny]>visited[now.x][now.y]){
-                    q.push({nx, ny});
-                    visited[nx][ny] = visited[now.x][now.y];
-                }
+                q.push_front({nx, ny});
+                visited[nx][ny] = visited[now.x][now.y];
             }
             else if(arr[nx][ny] == 1){
-                if(visited[nx][ny]==-1 || visited[nx][ny]>visited[now.x][now.y]+1){
-                    q.push({nx, ny});
-                    visited[nx][ny] = visited[now.x][now.y] + 1;
-                }
+                q.push_back({nx, ny});
+                visited[nx][ny] = visited[now.x][now.y] + 1;
             }
         }
     }
@@ -78,6 +77,13 @@ int main(void){
     bfs();
 
     cout << result << '\n';
+
+    // for(int i=0; i<N; i++){
+    //     for(int j=0; j<M; j++){
+    //         cout << visited[i][j] << ' ';
+    //     }
+    //     cout << '\n';
+    // }
 
     return 0;
 }
