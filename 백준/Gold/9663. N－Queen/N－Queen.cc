@@ -21,9 +21,8 @@ struct Point{
 const int MX = 15;
 
 int N, total;
-int visited[MX];
+int vstY[MX], vstD1[MX*2], vstD2[MX*2];
 int result;
-vector<Point> path;
 
 int dx[8] = {-1, -1, -1, 0, 1, 1, 1, 0};
 int dy[8] = {-1, 0, 1, 1, 1, 0, -1, -1};
@@ -39,24 +38,11 @@ void dfs(int x){
     }
 
     for(int y=0; y<N; y++){
-        if(visited[y] == 1) continue;
+        if(vstY[y]==1 || vstD1[x+y]==1 || vstD2[N-x+y-1]==1) continue;
 
-        bool flag = true;
-
-        for(const Point& p : path){
-            if(abs(p.x-x)==abs(p.y-y)){
-                flag = false;
-                break;
-            }
-        }
-
-        if(!flag) continue;
-
-        path.push_back({x, y});
-        visited[y] =1;
+        vstY[y] = vstD1[x+y] = vstD2[N-x+y-1] = 1;
         dfs(x+1);
-        visited[y] = 0;
-        path.pop_back();
+        vstY[y] = vstD1[x+y] = vstD2[N-x+y-1] = 0;
     }
 }
 
