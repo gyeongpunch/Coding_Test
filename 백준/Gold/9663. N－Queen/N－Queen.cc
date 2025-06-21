@@ -21,7 +21,7 @@ struct Point{
 const int MX = 15;
 
 int N, total;
-int visited[MX][MX];
+int visited[MX];
 int result;
 vector<Point> path;
 
@@ -39,10 +39,12 @@ void dfs(int x){
     }
 
     for(int y=0; y<N; y++){
+        if(visited[y] == 1) continue;
+
         bool flag = true;
 
         for(const Point& p : path){
-            if(p.y == y || abs(p.x-x)==abs(p.y-y)){
+            if(abs(p.x-x)==abs(p.y-y)){
                 flag = false;
                 break;
             }
@@ -51,9 +53,9 @@ void dfs(int x){
         if(!flag) continue;
 
         path.push_back({x, y});
-
+        visited[y] =1;
         dfs(x+1);
-
+        visited[y] = 0;
         path.pop_back();
     }
 }
