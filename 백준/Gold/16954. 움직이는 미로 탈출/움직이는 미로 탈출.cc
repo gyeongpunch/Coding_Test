@@ -52,8 +52,7 @@ int bfs(){
     while(!q.empty()){
         Info now = q.front(); q.pop();
 
-        if(now.t > N*2) continue;
-        if(now.x==0 && now.y==N-1) return 1;
+        if(now.t==8) return 1;
         if(now.t != prev) drop_wall(prev);
 
         for(int i=0; i<9; i++){
