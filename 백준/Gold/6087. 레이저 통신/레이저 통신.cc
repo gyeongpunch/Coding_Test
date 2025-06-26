@@ -29,7 +29,7 @@ char arr[MX][MX];
 int visited[MX][MX][4];
 int dx[4] = {-1, 0, 1, 0};
 int dy[4] = {0, 1, 0, -1};
-int dir[3] = {0, 1, 3};
+int dir[2] = {1, 3};
 
 bool bound_check(int x, int y){
     return 0<=x && x<N && 0<=y && y<M;
@@ -39,26 +39,37 @@ Point st={-1, -1}, ed={-1, -1};
 
 int bfs(){
     memset(visited, -1, sizeof(visited));
-    queue<Info> q;
+    deque<Info> dq;
     for(int i=0; i<4; i++){
-        q.push({st.x, st.y, i, 0});
+        dq.push_back({st.x, st.y, i, 0});
         visited[st.x][st.y][i] = 0;
     }
 
-    while(!q.empty()){
-        Info now = q.front(); q.pop();
+    while(!dq.empty()){
+        Info now = dq.front(); dq.pop_front();
 
-        for(int d=0; d<3; d++){
-            int nx = now.x + dx[now.d];
-            int ny = now.y + dy[now.d];
-            int nd = (now.d + dir[d]) % 4;
-            int nc = d==0 ? now.c : now.c+1;
-            int plus = d==0 ? 0 : 1;
+        int nx = now.x + dx[now.d];
+        int ny = now.y + dy[now.d];
+        int nd = now.d;
+        int nc = now.c;
 
+        if(bound_check(nx, ny) && arr[nx][ny] != '*'){
+            if(visited[nx][ny][nd]==-1 || visited[nx][ny][nd] > nc){
+                dq.push_front({nx, ny, nd, nc});
+                visited[nx][ny][nd] = nc;
+            }
+        }
+
+        for(int d=0; d<2; d++){
+            nd = (now.d + dir[d]) % 4;
+            nx=now.x+dx[nd];
+            ny=now.y+dy[nd];
+            nc = now.c+1;
+            
             if(!bound_check(nx, ny)) continue;
             if(arr[nx][ny] == '*') continue;
-            if(visited[nx][ny][nd] == -1 || visited[nx][ny][nd] > visited[now.x][now.y][now.d] + plus){
-                q.push({nx, ny, nd, nc});
+            if(visited[nx][ny][nd] == -1 || visited[nx][ny][nd] > nc){
+                dq.push_back({nx, ny, nd, nc});
                 visited[nx][ny][nd] = nc;
             }
         }
@@ -94,18 +105,7 @@ int main(void){
 
     int result = bfs();
 
-    cout << result << '\n';
-
-    // for(int d=0; d<4; d++){
-    //     for(int i=0; i<N; i++){
-    //         for(int j=0; j<M; j++){
-    //             cout << setw(3) << setfill(' ') << visited[i][j][d] << ' ';
-    //         }
-    //         cout << '\n';
-    //     }
-    //     cout << '\n';
-    // }
-        
+    cout << result << '\n';        
 
     return 0;
 }
