@@ -33,9 +33,6 @@ int main(void){
         cin >> B[i];
     }
 
-    sort(A, A+N);
-    sort(B, B+M);
-
     int ia=0, ib=0, idx=-1;
     while(ia!=N || ib!=M){
         if(ia==N){
