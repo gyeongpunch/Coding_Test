@@ -50,13 +50,14 @@ int main(void){
     // freopen("input.txt", "r", stdin);
 
     cin >> N;
-    int p, d;
+    int p, d, mxd=0;
     for(int i=0; i<N; i++){
         cin >> arr[i].p >> arr[i].d;
+        mxd = max(mxd, arr[i].d);
     }
 
     sort(arr, arr+N, cmp);
-    for(int i=1; i<=MX; i++){
+    for(int i=1; i<=mxd; i++){
         parent[i] = i;
     }
     
@@ -66,7 +67,7 @@ int main(void){
         if(visited[myP] == 0 && myP!=0){
             visited[myP] = 1;
             result += arr[i].p;
-            parent[myP] = parent[myP] - 1;
+            parent[myP] = myP - 1;
         }
     }
 
