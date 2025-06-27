@@ -14,11 +14,11 @@
 using namespace std;
 #define fastio ios::sync_with_stdio(false); cin.tie(0); cout.tie(nullptr);
 
-const int MX=20;
+const int MX = 20;
 
 int N;
-int result = 1e9;
 char arr[MX][MX], tmp[MX][MX];
+int result = MX*MX;
 
 int main(void){
     fastio;
@@ -26,7 +26,6 @@ int main(void){
     // freopen("input.txt", "r", stdin);
 
     cin >> N;
-
     for(int i=0; i<N; i++){
         for(int j=0; j<N; j++){
             cin >> arr[i][j];
@@ -34,24 +33,31 @@ int main(void){
     }
 
     for(int bit=0; bit<(1<<N); bit++){
-        for(int i=0; i<N; i++)
-            for(int j=0; j<N; j++)
+        for(int i=0; i<N; i++){
+            for(int j=0; j<N; j++){
                 tmp[i][j] = arr[i][j];
-        for(int i=0; i<N; i++)
-            if(bit & (1<<i))
-                for(int j=0; j<N; j++)
-                    tmp[i][j] = (tmp[i][j] == 'H') ? 'T' : 'H';
+            }
+        }
+        for(int i=0; i<N; i++){
+            if(bit & (1 << i)){
+                for(int j=0; j<N; j++){
+                    tmp[i][j] = tmp[i][j]=='T' ? 'H' : 'T';
+                }
+            }
+        }
 
-        int cnt = 0;
+        int cnt=0;
         for(int j=0; j<N; j++){
-            int tcnt = 0;
-            for(int i=0; i<N; i++)
-                if(tmp[i][j] == 'T') tcnt++;
-            cnt += min(tcnt, N-tcnt);
+            int cntTmp = 0;
+            for(int i=0; i<N; i++){
+                if(tmp[i][j] == 'T') cntTmp++;
+            }
+            cnt += min(cntTmp, N-cntTmp);
         }
         result = min(result, cnt);
     }
+
     cout << result << '\n';
-    
+
     return 0;
 }
