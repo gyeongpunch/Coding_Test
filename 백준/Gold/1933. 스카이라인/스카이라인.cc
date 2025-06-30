@@ -1,15 +1,8 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
-#include <string>
-#include <unordered_map>
-#include <unordered_set>
-#include <set>
-#include <map>
 #include <queue>
-#include <deque>
-#include <stack>
-#include <cstring>
+#include <unordered_map>
 
 using namespace std;
 #define fastio ios::sync_with_stdio(false); cin.tie(0); cout.tie(nullptr);
@@ -18,16 +11,14 @@ struct Event{
     int x, h;
 };
 
-bool cmp(Event a, Event b){
-    if(a.x==b.x) return a.h > b.h;
-    return a.x < b.x;
-}
-
-const int MX = 100001;
-
 int N;
 vector<Event> v;
-unordered_map<int, int> dontCare;
+unordered_map<int, int> Map;
+
+bool cmp(Event a, Event b){
+    if(a.x == b.x) return a.h > b.h;
+    return a.x < b.x;
+}
 
 int main(void){
     fastio;
@@ -45,15 +36,15 @@ int main(void){
     sort(v.begin(), v.end(), cmp);
 
     priority_queue<int> pq;
+    int prev = -1;
     pq.push(0);
 
-    int prev = -1;
-    for(const Event e : v){
+    for(const Event &e : v){
         if(e.h > 0) pq.push(e.h);
-        else dontCare[-e.h]++;
+        else Map[-e.h]++;
 
-        while(!pq.empty() && dontCare[pq.top()]){
-            dontCare[pq.top()]--;
+        while(!pq.empty() && Map[pq.top()] > 0){
+            Map[pq.top()]--;
             pq.pop();
         }
         int cur = pq.top();
@@ -62,5 +53,6 @@ int main(void){
             prev = cur;
         }
     }
+
     return 0;
 }
