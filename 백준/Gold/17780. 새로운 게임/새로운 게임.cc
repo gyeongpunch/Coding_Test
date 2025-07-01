@@ -1,15 +1,5 @@
 #include <iostream>
-#include <algorithm>
 #include <vector>
-#include <string>
-#include <unordered_map>
-#include <unordered_set>
-#include <set>
-#include <map>
-#include <queue>
-#include <deque>
-#include <stack>
-#include <cstring>
 
 using namespace std;
 #define fastio ios::sync_with_stdio(false); cin.tie(0); cout.tie(nullptr);
@@ -111,35 +101,7 @@ int main(void){
 
         for(int i=1; i<=K; i++){
             move(i);
-            // cout << "Move " << i << '\n';
-            // for(int i=1; i<=N; i++){
-            //     for(int j=1; j<=N; j++){
-            //         if(!horseMap[i][j].empty()){
-            //             cout << i << ' ' << j << '\n';
-            //             for(int n : horseMap[i][j]){
-            //                 cout << n << ' ';
-            //             }
-            //             cout << '\n';
-            //         }
-            //     }
-            // }
-            // cout << "\n\n";
         }
-
-
-        // for(int i=1; i<=N; i++){
-        //     for(int j=1; j<=N; j++){
-        //         if(!horseMap[i][j].empty()){
-        //             cout << i << ' ' << j << '\n';
-        //             for(int n : horseMap[i][j]){
-        //                 cout << n << ' ';
-        //             }
-        //             cout << '\n';
-        //         }
-        //     }
-        // }
-        // cout << "\n\n";
-        // if(result == 5) break;
         result++;
     }
     if(result == 1001) result = -1;
