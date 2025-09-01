@@ -31,10 +31,8 @@ int main() {
 		mark[now.idx] = N - now.idx - 1;
 	}
 
-	ll result = 0;
-	for(int i=0; i<N; i++){
-		result += mark[i];
-	}
+	ll result = accumulate(mark, mark+N, 0LL);
+	
 	cout << result << '\n';
 	return 0;
 }
