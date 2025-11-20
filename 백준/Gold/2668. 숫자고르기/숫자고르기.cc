@@ -8,67 +8,63 @@ const int MX = 101;
 int N;
 int graph[MX];
 int visited[MX];
-int is_cycle[MX];
-vector<int> tmp;
+vector<int> path;
 vector<int> result;
 
-void input() {
-    cin >> N;
-    for (int i = 1; i <= N; i++) {
-        cin >> graph[i];
-    }
+void input(){
+	cin >> N;
+	for(int i=1; i<=N; i++){
+		cin >> graph[i];
+	}
 }
 
-void dfs(int now) {
-    visited[now] = 1;
-    tmp.push_back(now);
+void dfs(int now){
+	visited[now] = 1;
+	path.push_back(now);
+	int nxt = graph[now];
 
-    int nxt = graph[now];
+	if(visited[nxt] == 0){
+		dfs(nxt);
+	}
+	else if(visited[nxt] == 1){
+		bool flag = false;
+		for(const int &n : path){
+			if(n == nxt) {
+				flag = true;
+			}
+			if(flag){
+				result.push_back(n);
+			}
+		}
+	}
 
-    if (visited[nxt] == 0) {
-        dfs(nxt);
-    }
-	else if (visited[nxt] == 1) {
-        bool on_cycle = false;
-        for (int x : tmp) {
-            if (x == nxt) on_cycle = true;
-            if (on_cycle) {
-                is_cycle[x] = 1;
-            }
-        }
-    }
-
-    visited[now] = 2;
-    tmp.pop_back();
+	visited[now] = 2;
+	path.pop_back();
 }
 
-void solution() {
-    for (int i = 1; i <= N; i++) {
-        if (visited[i] == 0) {
-            dfs(i);
-        }
-    }
+void solution(){
+	for(int i=1; i<=N; i++){
+		if(visited[i]==0){
+			dfs(i);
+		}
+	}
 
-    for (int i = 1; i <= N; i++) {
-        if (is_cycle[i]) result.push_back(i);
-    }
-
-    sort(result.begin(), result.end());
+	sort(result.begin(), result.end());
 }
 
-void get_result() {
-    cout << result.size() << '\n';
-    for (int x : result) {
-        cout << x << '\n';
-    }
+void get_result(){
+	cout << result.size() << '\n';
+	for(const int &n : result){
+		cout << n << '\n';
+	}
 }
 
 int main() {
-    input();
+	input();
 
-    solution();
-    
+	solution();
+
 	get_result();
-    
+
 	return 0;
 }
