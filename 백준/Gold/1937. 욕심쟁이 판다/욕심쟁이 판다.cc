@@ -26,6 +26,7 @@ void input(){
 
 int dfs(int x, int y){
 	int &now = visited[x][y];
+
 	if(now != 0) return now;
 
 	now = 1;
@@ -35,29 +36,21 @@ int dfs(int x, int y){
 		int ny=y+dy[i];
 
 		if(!bound_check(nx, ny)) continue;
-		if(arr[nx][ny] <= arr[x][y]) continue;
+		if(arr[nx][ny] >= arr[x][y]) continue;
 
 		now = max(now, 1 + dfs(nx, ny));
 	}
-	// visited[x][y] = max(visited[x][y], now);
+
 	return now;
 }
 
 void get_result(){
 	cout << result << '\n';
-
-	// for(int i=0; i<N; i++){
-	// 	for(int j=0; j<N; j++){
-	// 		cout << visited[i][j] << ' ';
-	// 	}
-	// 	cout << "\n";
-	// }
 }
 
 void solution(){
 	for(int i=0; i<N; i++){
 		for(int j=0; j<N; j++){
-
 			result = max(result, dfs(i, j));
 		}
 	}
